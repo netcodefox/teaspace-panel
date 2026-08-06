@@ -234,11 +234,39 @@ class Helper extends Controller
         return (string) $this->siteName();
     }
 
-    public function getLogoUrl(): string
+    public function resolveLogoRelativePath(): ?string
     {
         $path = $this->getSetting('logo_path');
-        if (is_string($path) && $path !== '' && is_file(__DIR__ . '/../../' . ltrim(str_replace('\\', '/', $path), '/'))) {
-            return $this->url() . ltrim(str_replace('\\', '/', $path), '/');
+        if (is_string($path) && trim($path) !== '') {
+            $rel = ltrim(str_replace('\\', '/', $path), '/');
+            if (is_file(__DIR__ . '/../../' . $rel)) {
+                return $rel;
+            }
+        }
+        $fallbacks = [
+            'assets/tea/logowhite.png',
+            'assets/tea/logo.png',
+            'assets/logonew.png',
+            'assets/300px-Teaspeak_Logo.png',
+        ];
+        foreach ($fallbacks as $rel) {
+            if (is_file(__DIR__ . '/../../' . $rel)) {
+                return $rel;
+            }
+        }
+        return null;
+    }
+
+    public function hasLogoImage(): bool
+    {
+        return $this->resolveLogoRelativePath() !== null;
+    }
+
+    public function getLogoUrl(): string
+    {
+        $rel = $this->resolveLogoRelativePath();
+        if ($rel !== null) {
+            return $this->url() . $rel;
         }
         return $this->url() . 'assets/tea/logo.png';
     }
@@ -250,6 +278,12 @@ class Helper extends Controller
             return $this->url() . ltrim(str_replace('\\', '/', $path), '/');
         }
         return $this->getLogoUrl();
+    }
+
+    public function showBrandText(): bool
+    {
+        // Nie leeren Header: ohne Logo immer Text; mit Logo kein doppelter Name
+        return !$this->hasLogoImage();
     }
 
     public function getSupportTsLabel(): string
@@ -360,29 +394,6 @@ class Helper extends Controller
             $out[] = ['label' => $label, 'url' => $url];
         }
         return $out;
-    }
-
-    public function hasLogoImage(): bool
-    {
-        $path = $this->getSetting('logo_path');
-        if (is_string($path) && trim($path) !== '') {
-            $abs = __DIR__ . '/../../' . ltrim(str_replace('\\', '/', $path), '/');
-            if (is_file($abs)) {
-                return true;
-            }
-        }
-        return is_file(__DIR__ . '/../../assets/tea/logo.png')
-            || is_file(__DIR__ . '/../../assets/logonew.png');
-    }
-
-    public function showBrandText(): bool
-    {
-        // Logo enthält bereits den Markennamen – kein doppelter Text daneben
-        if ($this->hasLogoImage()) {
-            return false;
-        }
-        $header = $this->getSiteContent()['header'] ?? [];
-        return !empty($header['show_brand_text']);
     }
 
     public function getHeaderTagline(): string

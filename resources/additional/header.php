@@ -40,8 +40,9 @@ $tagline = $helper->getHeaderTagline();
     <div class="container">
         <div class="navbar-header">
             <a class="logo tf-brand-link" href="<?= $helper->url(); ?>">
+                <?php if ($helper->hasLogoImage()): ?>
                 <img src="<?= htmlspecialchars($helper->getLogoUrl()); ?>" alt="<?= htmlspecialchars($helper->getDisplayName()); ?>">
-                <?php if ($showBrandText): ?>
+                <?php else: ?>
                 <span class="tf-brand-text"><?= htmlspecialchars($helper->getDisplayName()); ?></span>
                 <?php endif; ?>
             </a>

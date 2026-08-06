@@ -2,13 +2,16 @@
 $currPage = 'front_Startseite';
 include 'app/controller/PageController.php';
 $brand = $helper->getDisplayName();
+$logoUrl = $helper->getLogoUrl();
 ?>
 
 <section class="tf-hero">
+    <div class="tf-hero-glow" aria-hidden="true"></div>
     <div class="container">
         <div class="tf-hero-inner tf-hero-motion">
-            <h1 class="tf-brand"><?= htmlspecialchars($brand); ?></h1>
-            <p class="tf-hero-lead">TeaSpeak Hosting aus Deutschland – in Sekunden online, prepaid und mit Support, wenn du ihn brauchst.</p>
+            <img class="tf-hero-logo" src="<?= htmlspecialchars($logoUrl); ?>" alt="<?= htmlspecialchars($brand); ?>" width="280" height="80">
+            <h1 class="tf-hero-title">TeaSpeak Hosting</h1>
+            <p class="tf-hero-lead">In Sekunden online, prepaid und mit Support – Hosting aus Deutschland.</p>
             <div class="tf-hero-actions">
                 <a class="btn btn-primary btn-xlg" href="<?= $helper->url(); ?>teaspeak/order">TeaSpeak bestellen</a>
                 <a class="tf-btn-ghost" href="<?= $helper->url(); ?>contact">Kontakt</a>
