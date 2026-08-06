@@ -232,7 +232,8 @@ small.text-muted,
 
 .form-control,
 .select2-container--default .select2-selection--single,
-.card textarea {
+.card textarea,
+.custom-select {
   background: rgba(0, 0, 0, 0.28) !important;
   border: 1px solid var(--ts-line) !important;
   border-radius: 10px !important;
@@ -240,9 +241,73 @@ small.text-muted,
   min-height: 44px;
 }
 
-.form-control:focus {
+.form-control:focus,
+.custom-select:focus {
   border-color: rgba(20, 184, 166, 0.7) !important;
   box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.18) !important;
+}
+
+select.form-control option,
+.custom-select option {
+  background: #1a1b1f;
+  color: #f2f2f4;
+}
+
+select.form-control option:checked,
+.custom-select option:checked,
+select.form-control option:hover,
+.custom-select option:hover {
+  background: #0d9488;
+  color: #042f2e;
+}
+
+.input-group-text {
+  background: rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid var(--ts-line) !important;
+  color: var(--ts-muted) !important;
+  border-radius: 0 10px 10px 0 !important;
+}
+
+.ts-amount-group .form-control {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.ts-quick-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.ts-amount-chip {
+  min-height: 34px !important;
+  padding: 0.25rem 0.75rem !important;
+  border-color: var(--ts-line) !important;
+  color: var(--ts-text) !important;
+}
+
+.ts-amount-chip:hover {
+  background: rgba(20, 184, 166, 0.15) !important;
+  border-color: rgba(20, 184, 166, 0.45) !important;
+  color: var(--ts-text) !important;
+}
+
+.ts-note {
+  border-left: 3px solid var(--ts-accent) !important;
+}
+
+.ts-note-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ts-accent);
+  margin-bottom: 0.5rem;
+}
+
+.ts-note p {
+  color: var(--ts-muted) !important;
+  line-height: 1.55;
 }
 
 label { color: var(--ts-muted); font-weight: 600; font-size: 0.9rem; }
