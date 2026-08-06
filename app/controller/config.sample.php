@@ -7,7 +7,7 @@
 
 $db_host = 'localhost';
 $db_name = 'teaspace';
-$db_username = 'root';
+$db_username = 'dbuser';
 $db_password = '';
 
 $siteName = 'Tea-Space';

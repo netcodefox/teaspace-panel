@@ -9,9 +9,15 @@ session_start();
 
 const INSTALL_LOCK = __DIR__ . '/install.lock';
 const ROOT_DIR = __DIR__ . '/..';
-const CONFIG_FILE = ROOT_DIR . '/app/controller/config.php';
-const HTACCESS_FILE = ROOT_DIR . '/.htaccess';
-const SQL_FILE = ROOT_DIR . '/teaspace.sql';
+const CONFIG_FILE = __DIR__ . '/../app/controller/config.php';
+const INSTALL_DATA = __DIR__ . '/progress.json';
+const HTACCESS_FILE = __DIR__ . '/../.htaccess';
+const SQL_FILE = __DIR__ . '/../teaspace.sql';
+
+$forceReinstall = isset($_GET['reinstall']) && $_GET['reinstall'] === '1';
+if ($forceReinstall && is_file(INSTALL_LOCK)) {
+    @unlink(INSTALL_LOCK);
+}
 
 $installed = is_file(INSTALL_LOCK);
 
@@ -84,9 +90,63 @@ function install_escape(string $value): string
     return str_replace(["\\", "'"], ["\\\\", "\\'"], $value);
 }
 
-function install_write_config(array $d): void
+function install_load_progress(): array
 {
-    $sandbox = !empty($d['paypal_sandbox']) ? 'true' : 'false';
+    $fromSession = $_SESSION['install'] ?? [];
+    if (is_file(INSTALL_DATA)) {
+        $raw = file_get_contents(INSTALL_DATA);
+        $fromFile = is_string($raw) ? json_decode($raw, true) : null;
+        if (is_array($fromFile)) {
+            return array_merge($fromFile, $fromSession);
+        }
+    }
+    return is_array($fromSession) ? $fromSession : [];
+}
+
+function install_save_progress(array $data): void
+{
+    $_SESSION['install'] = $data;
+    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if ($json === false) {
+        return;
+    }
+    if (file_put_contents(INSTALL_DATA, $json) === false) {
+        // Session remains the fallback
+        return;
+    }
+}
+
+function install_write_config(array $data): void
+{
+    $d = [
+        'generated_at' => date('Y-m-d H:i:s'),
+        'db_host' => install_escape((string) ($data['db_host'] ?? 'localhost')),
+        'db_name' => install_escape((string) ($data['db_name'] ?? '')),
+        'db_username' => install_escape((string) ($data['db_username'] ?? '')),
+        'db_password' => install_escape((string) ($data['db_password'] ?? '')),
+        'site_name' => install_escape((string) ($data['site_name'] ?? 'Tea-Space')),
+        'url' => install_escape((string) ($data['url'] ?? 'http://localhost/')),
+        'grecaptcha_site' => install_escape((string) ($data['grecaptcha_site'] ?? '')),
+        'grecaptcha_secret' => install_escape((string) ($data['grecaptcha_secret'] ?? '')),
+        'mail_host' => install_escape((string) ($data['mail_host'] ?? '')),
+        'mail_port' => (int) ($data['mail_port'] ?? 465),
+        'mail_encryption' => install_escape((string) ($data['mail_encryption'] ?? 'ssl')),
+        'mail_username' => install_escape((string) ($data['mail_username'] ?? '')),
+        'mail_password' => install_escape((string) ($data['mail_password'] ?? '')),
+        'mail_from' => install_escape((string) ($data['mail_from'] ?? '')),
+        'mail_from_name' => install_escape((string) ($data['mail_from_name'] ?? 'Kundendienst')),
+        'mollie_api_key' => install_escape((string) ($data['mollie_api_key'] ?? '')),
+        'paypal_email' => install_escape((string) ($data['paypal_email'] ?? '')),
+        'paypal_sandbox' => !empty($data['paypal_sandbox']) ? 'true' : 'false',
+        'telegram_token' => install_escape((string) ($data['telegram_token'] ?? '')),
+        'telegram_chat_id' => install_escape((string) ($data['telegram_chat_id'] ?? '')),
+        'cron_key' => install_escape((string) ($data['cron_key'] ?? bin2hex(random_bytes(16)))),
+    ];
+
+    if ($d['db_name'] === '' || $d['db_username'] === '') {
+        throw new RuntimeException('Config-Schreiben abgebrochen: DB-Name/User fehlen.');
+    }
+
     $content = <<<PHP
 <?php
 
@@ -120,7 +180,7 @@ function install_write_config(array $d): void
 \$mollie_api_key = '{$d['mollie_api_key']}';
 
 \$paypal_email = '{$d['paypal_email']}';
-\$paypal_sandbox = {$sandbox};
+\$paypal_sandbox = {$d['paypal_sandbox']};
 
 \$telegram_token = '{$d['telegram_token']}';
 \$telegram_chat_id = '{$d['telegram_chat_id']}';
@@ -129,8 +189,26 @@ function install_write_config(array $d): void
 
 PHP;
 
-    if (file_put_contents(CONFIG_FILE, $content) === false) {
+    $target = CONFIG_FILE;
+    $dir = dirname($target);
+    if (!is_dir($dir)) {
+        throw new RuntimeException('Config-Verzeichnis fehlt: ' . $dir);
+    }
+    if (is_file($target) && !is_writable($target)) {
+        throw new RuntimeException('config.php ist nicht beschreibbar. Rechte prüfen (chmod/chown).');
+    }
+    if (!is_file($target) && !is_writable($dir)) {
+        throw new RuntimeException('Config-Verzeichnis ist nicht beschreibbar: ' . $dir);
+    }
+
+    if (file_put_contents($target, $content) === false) {
         throw new RuntimeException('config.php konnte nicht geschrieben werden.');
+    }
+
+    // Verify credentials were actually persisted
+    $written = file_get_contents($target);
+    if ($written === false || !str_contains($written, "\$db_name = '{$d['db_name']}';") || !str_contains($written, "\$db_username = '{$d['db_username']}';")) {
+        throw new RuntimeException('config.php wurde geschrieben, aber DB-Daten konnten nicht verifiziert werden.');
     }
 }
 
@@ -219,9 +297,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$installed) {
     $action = $_POST['action'] ?? '';
 
     if ($action === 'test_db') {
-        try {
+            try {
+            $userName = trim($_POST['db_username'] ?? '');
+            if ($userName === '' || strtolower($userName) === 'root') {
+                throw new RuntimeException('Bitte einen eigenen Datenbank-User verwenden (nicht „root“). Unter Plesk/MariaDB schlägt root@localhost typischerweise mit Fehler 1698 fehl.');
+            }
             $dsn = 'mysql:host=' . trim($_POST['db_host'] ?? '') . ';charset=utf8mb4';
-            $pdo = new PDO($dsn, trim($_POST['db_username'] ?? ''), (string) ($_POST['db_password'] ?? ''), [
+            $pdo = new PDO($dsn, $userName, (string) ($_POST['db_password'] ?? ''), [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ]);
             $dbName = trim($_POST['db_name'] ?? '');
@@ -230,13 +312,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$installed) {
             }
             $pdo->exec('CREATE DATABASE IF NOT EXISTS `' . str_replace('`', '``', $dbName) . '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
             $pdo->exec('USE `' . str_replace('`', '``', $dbName) . '`');
-            $_SESSION['install'] = array_merge($_SESSION['install'] ?? [], [
+
+            $progress = array_merge(install_load_progress(), [
                 'db_host' => trim($_POST['db_host']),
                 'db_name' => $dbName,
-                'db_username' => trim($_POST['db_username']),
+                'db_username' => $userName,
                 'db_password' => (string) ($_POST['db_password'] ?? ''),
+                'url' => $base['url'],
+                'site_name' => 'Tea-Space',
+                'cron_key' => bin2hex(random_bytes(16)),
             ]);
-            $success = 'Datenbankverbindung erfolgreich. Datenbank wurde ggf. angelegt.';
+            install_save_progress($progress);
+            install_write_config($progress);
+
+            $success = 'Datenbank OK – Zugangsdaten wurden in config.php gespeichert.';
             $step = 3;
         } catch (Throwable $e) {
             $errors[] = $e->getMessage();
@@ -245,43 +334,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$installed) {
     }
 
     if ($action === 'save_settings') {
-        $url = rtrim(trim($_POST['url'] ?? ''), '/') . '/';
-        $rewriteBase = trim($_POST['rewrite_base'] ?? '/');
-        if ($rewriteBase === '') {
-            $rewriteBase = '/';
-        }
-        if ($rewriteBase[0] !== '/') {
-            $rewriteBase = '/' . $rewriteBase;
-        }
-        if (substr($rewriteBase, -1) !== '/') {
-            $rewriteBase .= '/';
-        }
+        try {
+            $url = rtrim(trim($_POST['url'] ?? ''), '/') . '/';
+            $rewriteBase = trim($_POST['rewrite_base'] ?? '/');
+            if ($rewriteBase === '') {
+                $rewriteBase = '/';
+            }
+            if ($rewriteBase[0] !== '/') {
+                $rewriteBase = '/' . $rewriteBase;
+            }
+            if (substr($rewriteBase, -1) !== '/') {
+                $rewriteBase .= '/';
+            }
 
-        $_SESSION['install'] = array_merge($_SESSION['install'] ?? [], [
-            'site_name' => trim($_POST['site_name'] ?? 'Tea-Space'),
-            'url' => $url,
-            'rewrite_base' => $rewriteBase,
-            'grecaptcha_site' => trim($_POST['grecaptcha_site'] ?? ''),
-            'grecaptcha_secret' => trim($_POST['grecaptcha_secret'] ?? ''),
-            'mail_host' => trim($_POST['mail_host'] ?? ''),
-            'mail_port' => (int) ($_POST['mail_port'] ?? 465),
-            'mail_encryption' => trim($_POST['mail_encryption'] ?? 'ssl'),
-            'mail_username' => trim($_POST['mail_username'] ?? ''),
-            'mail_password' => (string) ($_POST['mail_password'] ?? ''),
-            'mail_from' => trim($_POST['mail_from'] ?? ''),
-            'mail_from_name' => trim($_POST['mail_from_name'] ?? 'Kundendienst'),
-            'mollie_api_key' => trim($_POST['mollie_api_key'] ?? ''),
-            'paypal_email' => trim($_POST['paypal_email'] ?? ''),
-            'paypal_sandbox' => isset($_POST['paypal_sandbox']),
-            'telegram_token' => trim($_POST['telegram_token'] ?? ''),
-            'telegram_chat_id' => trim($_POST['telegram_chat_id'] ?? ''),
-            'cron_key' => trim($_POST['cron_key'] ?? '') ?: bin2hex(random_bytes(16)),
-        ]);
-        $step = 4;
+            $progress = array_merge(install_load_progress(), [
+                'site_name' => trim($_POST['site_name'] ?? 'Tea-Space'),
+                'url' => $url,
+                'rewrite_base' => $rewriteBase,
+                'grecaptcha_site' => trim($_POST['grecaptcha_site'] ?? ''),
+                'grecaptcha_secret' => trim($_POST['grecaptcha_secret'] ?? ''),
+                'mail_host' => trim($_POST['mail_host'] ?? ''),
+                'mail_port' => (int) ($_POST['mail_port'] ?? 465),
+                'mail_encryption' => trim($_POST['mail_encryption'] ?? 'ssl'),
+                'mail_username' => trim($_POST['mail_username'] ?? ''),
+                'mail_password' => (string) ($_POST['mail_password'] ?? ''),
+                'mail_from' => trim($_POST['mail_from'] ?? ''),
+                'mail_from_name' => trim($_POST['mail_from_name'] ?? 'Kundendienst'),
+                'mollie_api_key' => trim($_POST['mollie_api_key'] ?? ''),
+                'paypal_email' => trim($_POST['paypal_email'] ?? ''),
+                'paypal_sandbox' => isset($_POST['paypal_sandbox']),
+                'telegram_token' => trim($_POST['telegram_token'] ?? ''),
+                'telegram_chat_id' => trim($_POST['telegram_chat_id'] ?? ''),
+                'cron_key' => trim($_POST['cron_key'] ?? '') ?: bin2hex(random_bytes(16)),
+            ]);
+
+            if (empty($progress['db_host']) || empty($progress['db_name']) || empty($progress['db_username'])) {
+                throw new RuntimeException('Datenbankdaten fehlen – bitte Schritt 2 wiederholen.');
+            }
+
+            install_save_progress($progress);
+            install_write_config($progress);
+            install_update_htaccess($rewriteBase);
+
+            $success = 'Einstellungen gespeichert (config.php aktualisiert).';
+            $step = 4;
+        } catch (Throwable $e) {
+            $errors[] = $e->getMessage();
+            $step = 3;
+        }
     }
 
     if ($action === 'finish') {
-        $data = $_SESSION['install'] ?? [];
+        $data = install_load_progress();
         $adminUser = trim($_POST['admin_username'] ?? '');
         $adminEmail = trim($_POST['admin_email'] ?? '');
         $adminPass = (string) ($_POST['admin_password'] ?? '');
@@ -299,11 +403,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$installed) {
         } elseif ($adminPass !== $adminPass2) {
             $errors[] = 'Passwörter stimmen nicht überein.';
             $step = 4;
-        } elseif (empty($data['db_host']) || empty($data['db_name'])) {
+        } elseif (empty($data['db_host']) || empty($data['db_name']) || empty($data['db_username'])) {
             $errors[] = 'Datenbankdaten fehlen – bitte Schritt 2 wiederholen.';
             $step = 2;
         } else {
             try {
+                // Config zuerst – Zugangsdaten gehen bei SQL-Fehlern nicht verloren
+                install_write_config($data);
+                install_update_htaccess($data['rewrite_base'] ?? $base['rewrite_base']);
+
                 $dsn = 'mysql:host=' . $data['db_host'] . ';dbname=' . $data['db_name'] . ';charset=utf8mb4';
                 $pdo = new PDO($dsn, $data['db_username'], $data['db_password'], [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -312,39 +420,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$installed) {
                 install_import_sql($pdo);
                 install_create_admin($pdo, $adminUser, $adminEmail, $adminPass);
 
-                $cfg = [
-                    'generated_at' => date('Y-m-d H:i:s'),
-                    'db_host' => install_escape($data['db_host']),
-                    'db_name' => install_escape($data['db_name']),
-                    'db_username' => install_escape($data['db_username']),
-                    'db_password' => install_escape($data['db_password']),
-                    'site_name' => install_escape($data['site_name'] ?? 'Tea-Space'),
-                    'url' => install_escape($data['url'] ?? $base['url']),
-                    'grecaptcha_site' => install_escape($data['grecaptcha_site'] ?? ''),
-                    'grecaptcha_secret' => install_escape($data['grecaptcha_secret'] ?? ''),
-                    'mail_host' => install_escape($data['mail_host'] ?? ''),
-                    'mail_port' => (int) ($data['mail_port'] ?? 465),
-                    'mail_encryption' => install_escape($data['mail_encryption'] ?? 'ssl'),
-                    'mail_username' => install_escape($data['mail_username'] ?? ''),
-                    'mail_password' => install_escape($data['mail_password'] ?? ''),
-                    'mail_from' => install_escape($data['mail_from'] ?? ''),
-                    'mail_from_name' => install_escape($data['mail_from_name'] ?? 'Kundendienst'),
-                    'mollie_api_key' => install_escape($data['mollie_api_key'] ?? ''),
-                    'paypal_email' => install_escape($data['paypal_email'] ?? ''),
-                    'paypal_sandbox' => !empty($data['paypal_sandbox']),
-                    'telegram_token' => install_escape($data['telegram_token'] ?? ''),
-                    'telegram_chat_id' => install_escape($data['telegram_chat_id'] ?? ''),
-                    'cron_key' => install_escape($data['cron_key'] ?? bin2hex(random_bytes(16))),
-                ];
-
-                install_write_config($cfg);
-                install_update_htaccess($data['rewrite_base'] ?? $base['rewrite_base']);
-
                 file_put_contents(INSTALL_LOCK, 'installed:' . date('c') . PHP_EOL);
+                @unlink(INSTALL_DATA);
                 unset($_SESSION['install']);
                 $installed = true;
                 $step = 99;
-                $success = 'Installation abgeschlossen.';
+                $success = 'Installation abgeschlossen. config.php enthält die DB-Zugangsdaten.';
             } catch (Throwable $e) {
                 $errors[] = $e->getMessage();
                 $step = 4;
@@ -353,7 +434,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$installed) {
     }
 }
 
-$s = $_SESSION['install'] ?? [];
+$s = install_load_progress();
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -623,7 +704,12 @@ $s = $_SESSION['install'] ?? [];
 
             <?php elseif ($step === 2): ?>
                 <h2>Datenbank</h2>
-                <p class="lead">Verbindung zur MySQL/MariaDB-Datenbank. Die Datenbank wird automatisch angelegt, falls sie fehlt.</p>
+                <p class="lead">Verbindung zur MySQL/MariaDB-Datenbank. Die Datenbank wird automatisch angelegt, falls der User die Rechte dazu hat.</p>
+                <div class="alert error" style="background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.35);color:#fde68a">
+                    <strong>Plesk / MariaDB:</strong> Nicht den System-User <code>root</code> verwenden (Fehler 1698).
+                    Im Plesk eine Datenbank inkl. Benutzer anlegen und diese Zugangsdaten hier eintragen.
+                    Falls <code>localhost</code> scheitert, Host <code>127.0.0.1</code> versuchen.
+                </div>
                 <form method="post">
                     <input type="hidden" name="action" value="test_db">
                     <div class="grid">
@@ -637,7 +723,7 @@ $s = $_SESSION['install'] ?? [];
                         </div>
                         <div>
                             <label for="db_username">Benutzer</label>
-                            <input id="db_username" name="db_username" required value="<?= htmlspecialchars($s['db_username'] ?? 'root') ?>">
+                            <input id="db_username" name="db_username" required value="<?= htmlspecialchars($s['db_username'] ?? '') ?>" placeholder="z.B. teaspace_user">
                         </div>
                         <div>
                             <label for="db_password">Passwort</label>
@@ -782,6 +868,10 @@ $s = $_SESSION['install'] ?? [];
                         <a class="btn btn-primary" href="<?= htmlspecialchars(rtrim(($s['url'] ?? $base['url']), '/') . '/login') ?>">Zum Login</a>
                         <a class="btn btn-ghost" href="<?= htmlspecialchars($base['url']) ?>">Zur Startseite</a>
                     </div>
+                    <p style="margin-top:1.5rem;font-size:0.9rem;color:var(--muted)">
+                        Neu installieren? <a href="?reinstall=1" style="color:var(--accent)">Installer zurücksetzen</a>
+                        (löscht nur die Lock-Datei, nicht die Datenbank).
+                    </p>
                 </div>
             <?php endif; ?>
         </div>

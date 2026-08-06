@@ -24,7 +24,19 @@ include_once './vendor/autoload.php';
  * config
  */
 include 'app/controller/config.php';
-include_once 'app/functions/autoload.php';
+
+try {
+    include_once 'app/functions/autoload.php';
+} catch (Throwable $e) {
+    http_response_code(500);
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><title>Datenbankfehler</title></head><body style="font-family:sans-serif;max-width:640px;margin:3rem auto;line-height:1.5">';
+    echo '<h1>Datenbankverbindung fehlgeschlagen</h1>';
+    echo '<p>' . htmlspecialchars($e->getMessage()) . '</p>';
+    echo '<p>Bitte <code>app/controller/config.php</code> prüfen oder <code>install/install.lock</code> löschen und den Installer unter <a href="install/">/install/</a> erneut ausführen.</p>';
+    echo '</body></html>';
+    exit;
+}
 
 include_once 'app/notifications/sendMail.php';
 

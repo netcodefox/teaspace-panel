@@ -9,8 +9,28 @@ abstract class Controller
     {
         include __DIR__ . '/config.php';
 
-        $db = new PDO('mysql:host=' . $db_host . ';charset=utf8mb4;dbname=' . $db_name, $db_username, $db_password);
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            $db = new PDO(
+                'mysql:host=' . $db_host . ';charset=utf8mb4;dbname=' . $db_name,
+                $db_username,
+                $db_password,
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                ]
+            );
+        } catch (PDOException $e) {
+            $hint = '';
+            if (str_contains($e->getMessage(), '1698') || str_contains($e->getMessage(), 'Access denied')) {
+                $hint = ' Auf MariaDB/Plesk bitte keinen System-User „root“ nutzen – im Panel eine eigene Datenbank + DB-User anlegen und in config.php bzw. im Installer eintragen. Bei Fehler 1698 oft „127.0.0.1“ statt „localhost“ testen.';
+            }
+            throw new PDOException(
+                'Datenbankverbindung fehlgeschlagen: ' . $e->getMessage() . '.' . $hint,
+                (int) $e->getCode(),
+                $e
+            );
+        }
+
         return $db;
     }
 

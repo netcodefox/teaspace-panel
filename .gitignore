@@ -1,4 +1,6 @@
 /install/install.lock
+/install/progress.json
+/app/controller/config.php
 /composer.phar
 /.env
 Thumbs.db
