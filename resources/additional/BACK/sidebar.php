@@ -1,6 +1,12 @@
+<?php
+$sessionToken = $_COOKIE['session_token'] ?? null;
+$inAcp = isset($currPage) && strpos((string) $currPage, 'team_') === 0;
+$isTeamUser = $user->isInTeam($sessionToken);
+$isAdminUser = $user->isAdmin($sessionToken);
+?>
 <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <a href="<?= $helper->url(); ?>dashboard" class="brand-link">
+    <a href="<?= $helper->url() . ($inAcp ? 'team/dashboard' : 'dashboard'); ?>" class="brand-link">
       <img src="<?= htmlspecialchars($helper->getLogoUrl()); ?>" alt="<?= htmlspecialchars($helper->getDisplayName()); ?>" class="brand-image">
       <span class="brand-text"><?= htmlspecialchars($helper->getDisplayName()); ?></span>
     </a>
@@ -8,6 +14,8 @@
     <div class="sidebar">
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+          <?php if (!$inAcp): ?>
           <li class="nav-header">Kundenbereich</li>
           <li class="nav-item">
             <a class="nav-link" href="<?= $helper->url(); ?>dashboard">
@@ -57,17 +65,28 @@
             </ul>
           </li>
 
-          <?php if (isset($_COOKIE['old_session_token'])) { ?>
+          <?php if (isset($_COOKIE['old_session_token'])): ?>
           <li class="nav-item">
             <a class="nav-link" href="<?= $helper->url(); ?>team/login_back">
               <i class="nav-icon fas fa-undo"></i>
               <p>Zurück zum ACP</p>
             </a>
           </li>
-          <?php } ?>
+          <?php endif; ?>
 
-          <?php if ($user->isInTeam($_COOKIE['session_token'] ?? null)) { ?>
-          <li class="nav-header">Team</li>
+          <?php if ($isTeamUser): ?>
+          <li class="nav-header">Administration</li>
+          <li class="nav-item">
+            <a class="nav-link ts-acp-switch" href="<?= $helper->url(); ?>team/dashboard">
+              <i class="nav-icon fas fa-shield-alt"></i>
+              <p>Zum Admin Panel</p>
+            </a>
+          </li>
+          <?php endif; ?>
+
+          <?php else: ?>
+          <?php if ($isTeamUser): ?>
+          <li class="nav-header">Admin Panel</li>
           <li class="nav-item">
             <a class="nav-link" href="<?= $helper->url(); ?>team/dashboard">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -87,8 +106,8 @@
             </a>
           </li>
 
-          <?php if ($user->isAdmin($_COOKIE['session_token'] ?? null)) { ?>
-          <li class="nav-header">Admin</li>
+          <?php if ($isAdminUser): ?>
+          <li class="nav-header">Einstellungen</li>
           <li class="nav-item">
             <a class="nav-link" href="<?= $helper->url(); ?>team/teaspeak-hosts">
               <i class="nav-icon fas fa-network-wired"></i>
@@ -131,8 +150,18 @@
               <p>E-Mail Blacklist</p>
             </a>
           </li>
-          <?php } ?>
-          <?php } ?>
+          <?php endif; ?>
+
+          <li class="nav-header">Bereich wechseln</li>
+          <li class="nav-item">
+            <a class="nav-link ts-acp-switch" href="<?= $helper->url(); ?>dashboard">
+              <i class="nav-icon fas fa-user"></i>
+              <p>Zum Kundenbereich</p>
+            </a>
+          </li>
+          <?php endif; ?>
+          <?php endif; ?>
+
         </ul>
       </nav>
     </div>

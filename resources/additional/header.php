@@ -1,6 +1,10 @@
 <?php
 $phoneSupport = $helper->getSupportPhoneValue();
-$isLoggedIn = !empty($_COOKIE['session_token']) && $user->sessionExists($_COOKIE['session_token']);
+$sessionToken = $_COOKIE['session_token'] ?? null;
+$isLoggedIn = !empty($sessionToken) && $user->sessionExists($sessionToken);
+$isTeam = $isLoggedIn && $user->isInTeam($sessionToken);
+$showBrandText = $helper->showBrandText();
+$tagline = $helper->getHeaderTagline();
 ?>
 <section class="row top_header">
     <div class="container">
@@ -10,13 +14,18 @@ $isLoggedIn = !empty($_COOKIE['session_token']) && $user->sessionExists($_COOKIE
                     <?php if ($phoneSupport !== ''): ?>
                     <li><i class="fas fa-phone"></i> <?= htmlspecialchars($phoneSupport); ?></li>
                     <?php endif; ?>
-                    <li><i class="fas fa-map-marker-alt"></i> Hosting aus Deutschland</li>
+                    <?php if ($tagline !== ''): ?>
+                    <li><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($tagline); ?></li>
+                    <?php endif; ?>
                 </ul>
             </div>
             <div class="col-sm-6">
                 <ul class="nav nav-pills pull-right">
                     <?php if ($isLoggedIn): ?>
                         <li><a href="<?= $helper->url(); ?>dashboard"><i class="fa fa-user"></i> Kundenbereich</a></li>
+                        <?php if ($isTeam): ?>
+                        <li><a href="<?= $helper->url(); ?>team/dashboard"><i class="fas fa-shield-alt"></i> Zum Admin Panel</a></li>
+                        <?php endif; ?>
                     <?php else: ?>
                         <li><a href="<?= $helper->url(); ?>login">Anmelden</a></li>
                         <li><a href="<?= $helper->url(); ?>register">Registrieren</a></li>
@@ -30,8 +39,11 @@ $isLoggedIn = !empty($_COOKIE['session_token']) && $user->sessionExists($_COOKIE
 <nav class="navbar navbar-default navbar-static-top fluid_header centered">
     <div class="container">
         <div class="navbar-header">
-            <a class="logo" href="<?= $helper->url(); ?>">
+            <a class="logo tf-brand-link" href="<?= $helper->url(); ?>">
                 <img src="<?= htmlspecialchars($helper->getLogoUrl()); ?>" alt="<?= htmlspecialchars($helper->getDisplayName()); ?>">
+                <?php if ($showBrandText): ?>
+                <span class="tf-brand-text"><?= htmlspecialchars($helper->getDisplayName()); ?></span>
+                <?php endif; ?>
             </a>
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main_navigation" aria-expanded="false" aria-label="Menü öffnen">
                 <span class="sr-only">Navigation umschalten</span>
@@ -43,18 +55,21 @@ $isLoggedIn = !empty($_COOKIE['session_token']) && $user->sessionExists($_COOKIE
 
         <div class="collapse navbar-collapse" id="main_navigation">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="<?= $helper->url(); ?>">Start</a></li>
-                <li><a href="<?= $helper->url(); ?>teaspeak/order">TeaSpeak</a></li>
-                <li><a href="<?= $helper->url(); ?>contact">Kontakt</a></li>
+                <?php foreach ($helper->getFrontNavLinks() as $link): ?>
+                <li><a href="<?= htmlspecialchars($link['url']); ?>"><?= htmlspecialchars($link['label']); ?></a></li>
+                <?php endforeach; ?>
+
                 <?php if ($isLoggedIn): ?>
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <?= htmlspecialchars((string) $username); ?> <span class="caret"></span>
+                        <?= htmlspecialchars((string) ($username ?? 'Konto')); ?> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="<?= $helper->url(); ?>dashboard">Dashboard</a></li>
+                        <li><a href="<?= $helper->url(); ?>dashboard">Kundenbereich</a></li>
+                        <?php if ($isTeam): ?>
+                        <li><a href="<?= $helper->url(); ?>team/dashboard"><strong>Zum Admin Panel</strong></a></li>
+                        <?php endif; ?>
                         <li><a href="<?= $helper->url(); ?>account/profile">Mein Profil</a></li>
-                        <li><a href="<?= $helper->url(); ?>account/affiliate">Affiliate</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="<?= $helper->url(); ?>logout">Ausloggen</a></li>
                     </ul>

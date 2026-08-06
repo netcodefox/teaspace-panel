@@ -99,6 +99,19 @@ h4.text-gredient1,
   width: auto !important;
   filter: drop-shadow(0 4px 12px rgba(0,0,0,.35));
 }
+.tf-brand-link {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none !important;
+}
+.tf-brand-text {
+  font-family: var(--tf-font);
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.03em;
+  color: var(--tf-text) !important;
+}
 .navbar-toggle {
   border-color: var(--tf-line) !important;
   margin-top: 18px;

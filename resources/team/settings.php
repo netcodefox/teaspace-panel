@@ -80,6 +80,21 @@ if (isset($_POST['saveBranding'])) {
             ];
         }
 
+        $navItems = [];
+        $navLabels = $_POST['nav_label'] ?? [];
+        $navUrls = $_POST['nav_url'] ?? [];
+        if (is_array($navLabels) && is_array($navUrls)) {
+            $count = max(count($navLabels), count($navUrls));
+            for ($i = 0; $i < $count && $i < 8; $i++) {
+                $label = trim((string) ($navLabels[$i] ?? ''));
+                $url = trim((string) ($navUrls[$i] ?? ''));
+                if ($label === '' && $url === '') {
+                    continue;
+                }
+                $navItems[] = ['label' => $label, 'url' => $url];
+            }
+        }
+
         $siteContent = [
             'contact' => [
                 'office' => [
@@ -118,12 +133,16 @@ if (isset($_POST['saveBranding'])) {
                 'extra_link_url' => trim($_POST['footer_extra_link_url'] ?? ''),
                 'legal' => $legal,
             ],
+            'header' => [
+                'show_brand_text' => isset($_POST['show_brand_text']),
+                'tagline' => trim($_POST['header_tagline'] ?? ''),
+            ],
+            'nav' => $navItems,
         ];
 
-        $fields['site_content'] = json_encode(
-            array_replace_recursive($helper->defaultSiteContent(), $siteContent),
-            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-        );
+        $merged = array_replace_recursive($helper->defaultSiteContent(), $siteContent);
+        $merged['nav'] = $navItems;
+        $fields['site_content'] = json_encode($merged, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         $helper->setSettings($fields);
         echo sendSuccess('Einstellungen gespeichert.');
@@ -139,6 +158,11 @@ $siteContent = $helper->getSiteContent();
 $contact = $siteContent['contact'];
 $social = $siteContent['social'];
 $footer = $siteContent['footer'];
+$headerCfg = $siteContent['header'] ?? [];
+$navItems = $siteContent['nav'] ?? [];
+while (count($navItems) < 5) {
+    $navItems[] = ['label' => '', 'url' => ''];
+}
 $legalByKey = [];
 foreach ($footer['legal'] as $item) {
     $legalByKey[$item['key']] = $item;
@@ -161,9 +185,17 @@ foreach ($footer['legal'] as $item) {
                         <div class="card-header">Markenauftritt</div>
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="display_name">Anzeigename</label>
-                                <input id="display_name" class="form-control" name="display_name" value="<?= htmlspecialchars((string) $displayName); ?>" placeholder="Tea-Space">
-                                <small class="form-text text-muted">Wird in Sidebar, Titel und Footer genutzt.</small>
+                                <label for="display_name">Anzeigename (Header / Brand)</label>
+                                <input id="display_name" class="form-control" name="display_name" value="<?= htmlspecialchars((string) $displayName); ?>" placeholder="TeaSpeak">
+                                <small class="form-text text-muted">Erscheint neben dem Logo in Header und Sidebar.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="header_tagline">Header-Tagline (Top-Leiste)</label>
+                                <input id="header_tagline" class="form-control" name="header_tagline" value="<?= htmlspecialchars((string) ($headerCfg['tagline'] ?? '')); ?>" placeholder="Hosting aus Deutschland">
+                            </div>
+                            <div class="custom-control custom-checkbox mb-3">
+                                <input type="checkbox" class="custom-control-input" id="show_brand_text" name="show_brand_text" value="1" <?= !empty($headerCfg['show_brand_text']) || !isset($headerCfg['show_brand_text']) ? 'checked' : ''; ?>>
+                                <label class="custom-control-label" for="show_brand_text">Anzeigenamen neben dem Logo anzeigen</label>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
@@ -195,6 +227,25 @@ foreach ($footer['legal'] as $item) {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="card ts-panel mb-3">
+                        <div class="card-header">Website-Navigation (Header)</div>
+                        <div class="card-body">
+                            <p class="text-muted small">Leere Zeilen werden ignoriert. Max. 8 Einträge.</p>
+                            <?php foreach ($navItems as $i => $nav): ?>
+                            <div class="form-row">
+                                <div class="form-group col-md-5">
+                                    <label>Label <?= (int) $i + 1; ?></label>
+                                    <input class="form-control" name="nav_label[]" value="<?= htmlspecialchars((string) ($nav['label'] ?? '')); ?>" placeholder="z. B. Start">
+                                </div>
+                                <div class="form-group col-md-7">
+                                    <label>URL <?= (int) $i + 1; ?></label>
+                                    <input class="form-control" name="nav_url[]" value="<?= htmlspecialchars((string) ($nav['url'] ?? '')); ?>" placeholder="<?= htmlspecialchars($helper->url()); ?>">
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 

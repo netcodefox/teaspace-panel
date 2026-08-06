@@ -576,6 +576,32 @@ ul.home-timeline > li:before {
   border-color: var(--ts-accent) !important;
 }
 
+.nav-sidebar .nav-link.ts-acp-switch {
+  background: rgba(20, 184, 166, 0.16) !important;
+  color: var(--ts-text) !important;
+  font-weight: 700;
+}
+.nav-sidebar .nav-link.ts-acp-switch:hover {
+  background: rgba(20, 184, 166, 0.28) !important;
+}
+.brand-inline {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--ts-text) !important;
+}
+.brand-inline-logo {
+  height: 28px;
+  width: auto;
+  border-radius: 6px;
+}
+.main-header .btn-sm {
+  min-height: 34px !important;
+  display: inline-flex;
+  align-items: center;
+}
+
 .nav-pills .nav-link {
   color: var(--ts-muted) !important;
   border-radius: 999px !important;

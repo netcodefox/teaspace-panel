@@ -311,6 +311,15 @@ class Helper extends Controller
                     ['key' => 'hoster', 'label' => 'Teaspeak Hoster', 'url' => '', 'external' => true],
                 ],
             ],
+            'header' => [
+                'show_brand_text' => true,
+                'tagline' => 'Hosting aus Deutschland',
+            ],
+            'nav' => [
+                ['label' => 'Start', 'url' => $base],
+                ['label' => 'TeaSpeak', 'url' => $base . 'teaspeak/order'],
+                ['label' => 'Kontakt', 'url' => $base . 'contact'],
+            ],
         ];
     }
 
@@ -325,12 +334,53 @@ class Helper extends Controller
         if (!is_array($decoded)) {
             return $defaults;
         }
-        return array_replace_recursive($defaults, $decoded);
+        $merged = array_replace_recursive($defaults, $decoded);
+        if (isset($decoded['nav']) && is_array($decoded['nav'])) {
+            $merged['nav'] = $decoded['nav'];
+        }
+        return $merged;
+    }
+
+    public function getFrontNavLinks(): array
+    {
+        $nav = $this->getSiteContent()['nav'] ?? [];
+        $out = [];
+        if (!is_array($nav)) {
+            return $out;
+        }
+        foreach ($nav as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $label = trim((string) ($item['label'] ?? ''));
+            $url = trim((string) ($item['url'] ?? ''));
+            if ($label === '' || $url === '' || $url === '#') {
+                continue;
+            }
+            $out[] = ['label' => $label, 'url' => $url];
+        }
+        return $out;
+    }
+
+    public function showBrandText(): bool
+    {
+        $header = $this->getSiteContent()['header'] ?? [];
+        return !isset($header['show_brand_text']) || (bool) $header['show_brand_text'];
+    }
+
+    public function getHeaderTagline(): string
+    {
+        $header = $this->getSiteContent()['header'] ?? [];
+        $tag = trim((string) ($header['tagline'] ?? ''));
+        return $tag !== '' ? $tag : 'Hosting aus Deutschland';
     }
 
     public function saveSiteContent(array $content): void
     {
         $merged = array_replace_recursive($this->defaultSiteContent(), $content);
+        if (isset($content['nav']) && is_array($content['nav'])) {
+            $merged['nav'] = $content['nav'];
+        }
         $this->setSettings(['site_content' => json_encode($merged, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
     }
 
