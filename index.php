@@ -146,6 +146,9 @@ if (isset($_GET['page'])) {
         case "team_bot": $pageFile = $team."bot.php";  break;
 		case "team_invoice": $pageFile = $team. "invoice.php"; break;
 		case "team_streams": $pageFile = $team."streams.php";  break;
+        case "team_teaspeak_hosts": $pageFile = $team."teaspeak_hosts.php"; break;
+        case "team_teaspeak_host": $pageFile = $team."teaspeak_host.php"; break;
+        case "team_settings": $pageFile = $team."settings.php"; break;
     }
 
     // Include in global scope so $user / $helper / $db stay available

@@ -1,6 +1,9 @@
 /install/install.lock
 /install/progress.json
 /app/controller/config.php
+/assets/uploads/**
+!/assets/uploads/branding/
+!/assets/uploads/branding/.gitkeep
 /composer.phar
 /.env
 Thumbs.db

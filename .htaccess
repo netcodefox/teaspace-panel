@@ -67,6 +67,9 @@
 	RewriteRule ^team/dashboard?$ index.php?page=team_dashboard [L]
 	RewriteRule ^team/nodes?$ index.php?page=team_nodes [L]
     RewriteRule ^team/node/([A-Za-z0-9-]+)?$ index.php?page=team_node&id=$1 [NC,L]
+	RewriteRule ^team/teaspeak-hosts?$ index.php?page=team_teaspeak_hosts [L]
+    RewriteRule ^team/teaspeak-host/([A-Za-z0-9-]+)?$ index.php?page=team_teaspeak_host&id=$1 [NC,L]
+	RewriteRule ^team/settings?$ index.php?page=team_settings [L]
 	RewriteRule ^team/invoice/([A-Za-z0-9-]+)?$ index.php?page=team_invoice&id=$1 [NC,L]
 
 </IfModule>

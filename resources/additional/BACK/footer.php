@@ -4,7 +4,7 @@
   <!-- /.content-wrapper -->
 
  <footer class="main-footer">
-    <strong>Copyright &copy; 2020 <a href="#" ><?= $siteName;  ?><a></strong>
+    <strong>Copyright &copy; <?= date('Y'); ?> <a href="<?= $helper->url(); ?>"><?= htmlspecialchars($helper->getDisplayName()); ?></a></strong>
     All rights reserved.
     <div class="float-right d-none d-sm-inline-block">
       <b>Version</b> 8.2.0 | <a href="<?= $helper->url(); ?>impressum" >Impressum<a> | <a href="<?= $helper->url(); ?>datenschutz" >Datenschutz<a> | <a href="<?= $helper->url(); ?>agb" >AGB'S<a>

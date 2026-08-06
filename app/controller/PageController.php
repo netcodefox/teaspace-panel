@@ -2,6 +2,10 @@
 
 $sessionToken = $_COOKIE['session_token'] ?? null;
 
+if (isset($helper) && method_exists($helper, 'ensureSettingsSchema')) {
+    $helper->ensureSettingsSchema();
+}
+
 if (!empty($sessionToken) && $user->sessionExists($sessionToken)) {
     /*
      * set static values

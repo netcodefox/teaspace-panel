@@ -211,7 +211,10 @@ CREATE TABLE `settings` (
   `id` int(11) NOT NULL,
   `login` int(11) NOT NULL,
   `register` int(11) NOT NULL,
-  `wartung` int(11) NOT NULL DEFAULT 0
+  `wartung` int(11) NOT NULL DEFAULT 0,
+  `logo_path` varchar(255) DEFAULT NULL,
+  `favicon_path` varchar(255) DEFAULT NULL,
+  `display_name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -265,18 +268,21 @@ CREATE TABLE `teaspeak_hosts` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `login_ip` varchar(255) NOT NULL,
+  `display_ip` varchar(255) DEFAULT NULL,
   `login_port` varchar(255) NOT NULL,
   `login_name` varchar(255) NOT NULL,
   `login_passwort` varchar(255) NOT NULL,
-  `status` enum('ACTIVE','DISABLED') NOT NULL
+  `status` enum('ACTIVE','DISABLED') NOT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Daten für Tabelle `teaspeak_hosts`
 --
 
-INSERT INTO `teaspeak_hosts` (`id`, `name`, `login_ip`, `login_port`, `login_name`, `login_passwort`, `status`) VALUES
-(1, 'teaspeak Server', 'tea.wino-voice.de', '10101', 'serveradmin', '******', 'ACTIVE');
+INSERT INTO `teaspeak_hosts` (`id`, `name`, `login_ip`, `display_ip`, `login_port`, `login_name`, `login_passwort`, `status`) VALUES
+(1, 'teaspeak Server', 'tea.wino-voice.de', 'tea.wino-voice.de', '10101', 'serveradmin', '******', 'ACTIVE');
 
 -- --------------------------------------------------------
 

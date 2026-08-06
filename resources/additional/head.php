@@ -7,9 +7,9 @@
 	<meta name="description" content="Wino-space, Wino-Space, Wir sind ein Hoster aus Deutschland, egal was Sie brauchen ob Webspace, KVM Server, Voice Server, Domains, Web Panels, das finden Sie bei uns..">
     <meta name="keywords" content="Wino-space, Winospace,WinoSpace,Wino-space/it ,Wino-IT ,Webspace ,teamspeak,teaspeak,free webspace,kostenloser webserver,">
     <!-- FAVICON -->
-  <link rel="icon" href="<?= $helper->url(); ?>assets/tea/logo.png">
+  <link rel="icon" href="<?= htmlspecialchars($helper->getFaviconUrl()); ?>">
     <!-- TITLE -->
-    <title><?= $siteName;  ?> | <?= $currPageName; ?></title>
+    <title><?= htmlspecialchars($helper->getDisplayName()); ?> | <?= htmlspecialchars($currPageName); ?></title>
     <!-- bootstrap.min.css -->
  <!--Fonts-->
 	<link href='http://fonts.googleapis.com/css?family=Nunito:600,700,800|Montserrat:500,600,700|Open+Sans:300,500,600' rel='stylesheet' type='text/css'>

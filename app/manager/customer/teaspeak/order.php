@@ -50,17 +50,20 @@ if(isset($_POST['order'])){
         $error = 'Du hast leider nicht genügend Guthaben';
     }
 
-    $node_id = '1';
+    $nodeStmt = $db->prepare("SELECT * FROM `teaspeak_hosts` WHERE `status` = 'ACTIVE' ORDER BY `id` ASC LIMIT 1");
+    $nodeStmt->execute();
+    $nodeInfos = $nodeStmt->fetch(PDO::FETCH_ASSOC);
+    if (!$nodeInfos) {
+        $error = 'Aktuell ist keine TeaSpeak-Instanz verfügbar. Bitte später erneut versuchen.';
+    }
+
+    $node_id = $nodeInfos['id'] ?? null;
     $port = rand(9000, 12000);
-    if(!$site->isTS3PortAviable($node_id, $port)){
+    if ($node_id && !$site->isTeaPortAviable($node_id, $port)) {
         $error = 'Bitte versuche es erneut';
     }
 
-    if(empty($error)){
-
-        $getNodeInfos = $db->prepare("SELECT * FROM `teaspeak_hosts` WHERE `id` = :id");
-        $getNodeInfos->execute(array(":id" => $node_id));
-        $nodeInfos = $getNodeInfos->fetch(PDO::FETCH_ASSOC);
+    if (empty($error)) {
 
         $sid_converter = json_encode($tea->createServer($node_id, $_POST['slots'], $port));
         $get_sid = json_decode($sid_converter);
@@ -70,8 +73,10 @@ if(isset($_POST['order'])){
         $date->modify('+' . $_POST['duration'] . ' day');
         $new_date = $date->format('Y-m-d H:i:s');
 
+        $publicIp = !empty($nodeInfos['display_ip']) ? $nodeInfos['display_ip'] : $nodeInfos['login_ip'];
+
         $SQLInsertBot = $db->prepare("INSERT INTO `teaspeaks`(`slots`, `user_id`, `node_id`, `teaspeak_ip`, `teaspeak_port`, `sid`, `expire_at`, `price`) VALUES (:slots,:user_id,:node_id,:teaspeak_ip,:teaspeak_port,:sid,:expire_at,:price)");
-        $SQLInsertBot->execute(array(":slots" => $_POST['slots'], ":user_id" => $userid, ":node_id" => $node_id, ":teaspeak_ip" => $nodeInfos['login_ip'], ":teaspeak_port" => $port, ":sid" => $sid, ":expire_at" => $new_date, ":price" => $db_price));
+        $SQLInsertBot->execute(array(":slots" => $_POST['slots'], ":user_id" => $userid, ":node_id" => $node_id, ":teaspeak_ip" => $publicIp, ":teaspeak_port" => $port, ":sid" => $sid, ":expire_at" => $new_date, ":price" => $db_price));
 
         $user->removeMoney($price, $userid);
         $user->addTransaction($userid,'-'.$price,'Teaspeak Server Bestellung');

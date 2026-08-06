@@ -23,8 +23,8 @@ if(isset($_POST['changeMode'])){
     
    
     <!-- The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-<link rel="icon" href="<?= $helper->url(); ?>assets/tea/logo.png">
-    <title><?= $siteName;  ?> | <?= $currPageName; ?></title>
+<link rel="icon" href="<?= htmlspecialchars($helper->getFaviconUrl()); ?>">
+    <title><?= htmlspecialchars($helper->getDisplayName()); ?> | <?= htmlspecialchars($currPageName); ?></title>
 
     
 <style>
@@ -91,8 +91,8 @@ ul.home-timeline > li:before {
   
   
   
-  <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <!-- Google Font: Plus Jakarta Sans via teaspace-admin.css -->
+  <link rel="stylesheet" href="<?= $helper->cdnUrl(); ?>/BACKEND/teaspace-admin.css">
 	
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
