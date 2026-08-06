@@ -97,6 +97,9 @@ class Helper extends Controller
             if (!in_array('support_phone_value', $cols, true)) {
                 $alters[] = "ADD COLUMN `support_phone_value` varchar(255) DEFAULT NULL";
             }
+            if (!in_array('site_content', $cols, true)) {
+                $alters[] = "ADD COLUMN `site_content` longtext DEFAULT NULL";
+            }
             if ($alters) {
                 $db->exec('ALTER TABLE `settings` ' . implode(', ', $alters));
             }
@@ -169,6 +172,98 @@ class Helper extends Controller
     {
         $v = $this->getSetting('support_phone_value');
         return (is_string($v) && trim($v) !== '') ? trim($v) : '+49 (0) 2452 860729';
+    }
+
+    public function defaultSiteContent(): array
+    {
+        $base = $this->url();
+        return [
+            'contact' => [
+                'office' => ['title' => 'Büro', 'line1' => 'Kommt', 'line2' => 'Noch'],
+                'phone' => ['title' => 'Ruf Uns An', 'line1' => '', 'line2' => ''],
+                'message' => [
+                    'title' => 'Send Message',
+                    'line1' => '',
+                    'line2' => 'Oder',
+                    'link_label' => 'Ticket',
+                    'link_url' => $base . 'support',
+                ],
+                'whatsapp' => ['title' => '24 / 7 Whatsapp', 'line1' => '', 'line2' => ''],
+            ],
+            'social' => [
+                'facebook' => '',
+                'twitter' => '',
+                'instagram' => '',
+                'teamspeak' => '',
+                'discord' => '',
+            ],
+            'footer' => [
+                'about' => '',
+                'extra_link_label' => '',
+                'extra_link_url' => '',
+                'legal' => [
+                    ['key' => 'impressum', 'label' => 'Impressum', 'url' => $base . 'impressum', 'external' => false],
+                    ['key' => 'datenschutz', 'label' => 'Datenschutz', 'url' => $base . 'datenschutz', 'external' => false],
+                    ['key' => 'agb', 'label' => 'AGB', 'url' => $base . 'agb', 'external' => false],
+                    ['key' => 'widerruf', 'label' => 'Widerruf', 'url' => $base . 'widerruf', 'external' => false],
+                    ['key' => 'hoster', 'label' => 'Teaspeak Hoster', 'url' => '', 'external' => true],
+                ],
+            ],
+        ];
+    }
+
+    public function getSiteContent(): array
+    {
+        $defaults = $this->defaultSiteContent();
+        $raw = $this->getSetting('site_content');
+        if (!is_string($raw) || trim($raw) === '') {
+            return $defaults;
+        }
+        $decoded = json_decode($raw, true);
+        if (!is_array($decoded)) {
+            return $defaults;
+        }
+        return array_replace_recursive($defaults, $decoded);
+    }
+
+    public function saveSiteContent(array $content): void
+    {
+        $merged = array_replace_recursive($this->defaultSiteContent(), $content);
+        $this->setSettings(['site_content' => json_encode($merged, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+    }
+
+    public function getContactCard(string $key): array
+    {
+        $content = $this->getSiteContent();
+        $card = $content['contact'][$key] ?? [];
+        return is_array($card) ? $card : [];
+    }
+
+    public function getSocialLinks(): array
+    {
+        $social = $this->getSiteContent()['social'] ?? [];
+        $icons = [
+            'facebook' => 'fa fa-facebook',
+            'twitter' => 'fa fa-twitter',
+            'instagram' => 'fa fa-instagram',
+            'teamspeak' => 'fab fa-teamspeak',
+            'discord' => 'fab fa-discord',
+        ];
+        $out = [];
+        foreach ($icons as $key => $icon) {
+            $url = trim((string) ($social[$key] ?? ''));
+            if ($url === '' || $url === '#') {
+                continue;
+            }
+            $out[] = ['key' => $key, 'url' => $url, 'icon' => $icon];
+        }
+        return $out;
+    }
+
+    public function getFooterLegal(): array
+    {
+        $legal = $this->getSiteContent()['footer']['legal'] ?? [];
+        return is_array($legal) ? $legal : [];
     }
 
     public function setSettings(array $fields): void

@@ -1,6 +1,11 @@
 <?php
 $currPage = 'front_Impressum';
 include 'app/controller/PageController.php';
+
+$office = $helper->getContactCard('office');
+$phone = $helper->getContactCard('phone');
+$message = $helper->getContactCard('message');
+$whatsapp = $helper->getContactCard('whatsapp');
 ?>
 <!--Contact Banner-->
     <section class="row">
@@ -21,9 +26,9 @@ include 'app/controller/PageController.php';
                     <div class="media border shadow bg-pattern">
                         <div class="media-left"><i class="ti-map-alt fa-5x text-gredient1"></i></div>
                         <div class="media-body">
-                            <h4>Büro</h4>
-                            <p>Kommt</p>
-                            <p>Noch</p>
+                            <h4><?= htmlspecialchars((string) ($office['title'] ?? 'Büro')); ?></h4>
+                            <?php if (($office['line1'] ?? '') !== ''): ?><p><?= htmlspecialchars((string) $office['line1']); ?></p><?php endif; ?>
+                            <?php if (($office['line2'] ?? '') !== ''): ?><p><?= htmlspecialchars((string) $office['line2']); ?></p><?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -32,10 +37,9 @@ include 'app/controller/PageController.php';
                     <div class="media border shadow bg-pattern">
                         <div class="media-left"><i class="ti-mobile fa-5x text-gredient1"></i></div>
                         <div class="media-body">
-                            <h4>Ruf Uns An</h4>
-                            <p>#</p>
-                            <p>#</p>
-                            
+                            <h4><?= htmlspecialchars((string) ($phone['title'] ?? 'Ruf Uns An')); ?></h4>
+                            <?php if (($phone['line1'] ?? '') !== ''): ?><p><?= htmlspecialchars((string) $phone['line1']); ?></p><?php endif; ?>
+                            <?php if (($phone['line2'] ?? '') !== ''): ?><p><?= htmlspecialchars((string) $phone['line2']); ?></p><?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -44,10 +48,21 @@ include 'app/controller/PageController.php';
                     <div class="media border shadow bg-pattern">
                         <div class="media-left"><i class="ti-email fa-5x text-gredient1"></i></div>
                         <div class="media-body">
-                            <h4>Send Message</h4>
-                            <p>#</p>
-                            <p>Oder <a href="<?= $helper->url(); ?>support"> Ticket</a></p>
-                            
+                            <h4><?= htmlspecialchars((string) ($message['title'] ?? 'Send Message')); ?></h4>
+                            <?php if (($message['line1'] ?? '') !== ''): ?><p><?= htmlspecialchars((string) $message['line1']); ?></p><?php endif; ?>
+                            <?php
+                            $line2 = trim((string) ($message['line2'] ?? ''));
+                            $linkLabel = trim((string) ($message['link_label'] ?? ''));
+                            $linkUrl = trim((string) ($message['link_url'] ?? ''));
+                            if ($line2 !== '' || ($linkLabel !== '' && $linkUrl !== '')):
+                            ?>
+                            <p>
+                                <?php if ($line2 !== ''): ?><?= htmlspecialchars($line2); ?> <?php endif; ?>
+                                <?php if ($linkLabel !== '' && $linkUrl !== ''): ?>
+                                    <a href="<?= htmlspecialchars($linkUrl); ?>"><?= htmlspecialchars($linkLabel); ?></a>
+                                <?php endif; ?>
+                            </p>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -56,8 +71,9 @@ include 'app/controller/PageController.php';
                     <div class="media border shadow bg-pattern">
                         <div class="media-left"><i class="ti-headphone-alt fa-5x text-gredient1"></i></div>
                         <div class="media-body">
-                            <h4>24 / 7 Whatsapp</h4>
-                            <p>#</p>
+                            <h4><?= htmlspecialchars((string) ($whatsapp['title'] ?? '24 / 7 Whatsapp')); ?></h4>
+                            <?php if (($whatsapp['line1'] ?? '') !== ''): ?><p><?= htmlspecialchars((string) $whatsapp['line1']); ?></p><?php endif; ?>
+                            <?php if (($whatsapp['line2'] ?? '') !== ''): ?><p><?= htmlspecialchars((string) $whatsapp['line2']); ?></p><?php endif; ?>
                         </div>
                     </div>
                 </div>

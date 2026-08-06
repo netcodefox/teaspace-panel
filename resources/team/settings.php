@@ -69,6 +69,62 @@ if (isset($_POST['saveBranding'])) {
             $fields['favicon_path'] = null;
         }
 
+        $legalKeys = ['impressum', 'datenschutz', 'agb', 'widerruf', 'hoster'];
+        $legal = [];
+        foreach ($legalKeys as $key) {
+            $legal[] = [
+                'key' => $key,
+                'label' => trim($_POST['legal_label_' . $key] ?? ''),
+                'url' => trim($_POST['legal_url_' . $key] ?? ''),
+                'external' => $key === 'hoster' || !empty($_POST['legal_external_' . $key]),
+            ];
+        }
+
+        $siteContent = [
+            'contact' => [
+                'office' => [
+                    'title' => trim($_POST['contact_office_title'] ?? ''),
+                    'line1' => trim($_POST['contact_office_line1'] ?? ''),
+                    'line2' => trim($_POST['contact_office_line2'] ?? ''),
+                ],
+                'phone' => [
+                    'title' => trim($_POST['contact_phone_title'] ?? ''),
+                    'line1' => trim($_POST['contact_phone_line1'] ?? ''),
+                    'line2' => trim($_POST['contact_phone_line2'] ?? ''),
+                ],
+                'message' => [
+                    'title' => trim($_POST['contact_message_title'] ?? ''),
+                    'line1' => trim($_POST['contact_message_line1'] ?? ''),
+                    'line2' => trim($_POST['contact_message_line2'] ?? ''),
+                    'link_label' => trim($_POST['contact_message_link_label'] ?? ''),
+                    'link_url' => trim($_POST['contact_message_link_url'] ?? ''),
+                ],
+                'whatsapp' => [
+                    'title' => trim($_POST['contact_whatsapp_title'] ?? ''),
+                    'line1' => trim($_POST['contact_whatsapp_line1'] ?? ''),
+                    'line2' => trim($_POST['contact_whatsapp_line2'] ?? ''),
+                ],
+            ],
+            'social' => [
+                'facebook' => trim($_POST['social_facebook'] ?? ''),
+                'twitter' => trim($_POST['social_twitter'] ?? ''),
+                'instagram' => trim($_POST['social_instagram'] ?? ''),
+                'teamspeak' => trim($_POST['social_teamspeak'] ?? ''),
+                'discord' => trim($_POST['social_discord'] ?? ''),
+            ],
+            'footer' => [
+                'about' => trim($_POST['footer_about'] ?? ''),
+                'extra_link_label' => trim($_POST['footer_extra_link_label'] ?? ''),
+                'extra_link_url' => trim($_POST['footer_extra_link_url'] ?? ''),
+                'legal' => $legal,
+            ],
+        ];
+
+        $fields['site_content'] = json_encode(
+            array_replace_recursive($helper->defaultSiteContent(), $siteContent),
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
+
         $helper->setSettings($fields);
         echo sendSuccess('Einstellungen gespeichert.');
     } catch (Throwable $e) {
@@ -79,20 +135,28 @@ if (isset($_POST['saveBranding'])) {
 $displayName = $helper->getSetting('display_name') ?: $helper->siteName();
 $logoUrl = $helper->getLogoUrl();
 $faviconUrl = $helper->getFaviconUrl();
+$siteContent = $helper->getSiteContent();
+$contact = $siteContent['contact'];
+$social = $siteContent['social'];
+$footer = $siteContent['footer'];
+$legalByKey = [];
+foreach ($footer['legal'] as $item) {
+    $legalByKey[$item['key']] = $item;
+}
 ?>
 
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
             <h1 class="ts-page-title">Einstellungen &amp; Branding</h1>
-            <p class="ts-page-sub">Logo, Support-Kontakte, Seitenname und System-Schalter</p>
+            <p class="ts-page-sub">Logo, Kontakt, Footer, Social-Links und System-Schalter</p>
         </div>
     </div>
 
     <div class="content">
         <div class="container-fluid">
             <form method="post" enctype="multipart/form-data" class="row">
-                <div class="col-lg-7">
+                <div class="col-lg-8">
                     <div class="card ts-panel mb-3">
                         <div class="card-header">Markenauftritt</div>
                         <div class="card-body">
@@ -133,7 +197,6 @@ $faviconUrl = $helper->getFaviconUrl();
                                 <div class="form-group col-md-6">
                                     <label for="support_ts_value">Teamspeak – Adresse</label>
                                     <input id="support_ts_value" class="form-control" name="support_ts_value" value="<?= htmlspecialchars($helper->getSupportTsValue()); ?>" placeholder="ts.example.de">
-                                    <small class="form-text text-muted">Wird als Anzeige und als <code>ts3server://…</code>-Link genutzt.</small>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -146,6 +209,114 @@ $faviconUrl = $helper->getFaviconUrl();
                                     <input id="support_phone_value" class="form-control" name="support_phone_value" value="<?= htmlspecialchars($helper->getSupportPhoneValue()); ?>" placeholder="+49 …">
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="card ts-panel mb-3">
+                        <div class="card-header">Kontaktseite – Info-Karten</div>
+                        <div class="card-body">
+                            <?php
+                            $cardDefs = [
+                                'office' => 'Büro / Standort',
+                                'phone' => 'Telefon',
+                                'message' => 'Nachricht / E-Mail',
+                                'whatsapp' => 'WhatsApp',
+                            ];
+                            foreach ($cardDefs as $key => $label):
+                                $c = $contact[$key] ?? [];
+                            ?>
+                            <h6 class="text-muted mb-2"><?= htmlspecialchars($label); ?></h6>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label>Titel</label>
+                                    <input class="form-control" name="contact_<?= $key; ?>_title" value="<?= htmlspecialchars((string) ($c['title'] ?? '')); ?>">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>Zeile 1</label>
+                                    <input class="form-control" name="contact_<?= $key; ?>_line1" value="<?= htmlspecialchars((string) ($c['line1'] ?? '')); ?>">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>Zeile 2</label>
+                                    <input class="form-control" name="contact_<?= $key; ?>_line2" value="<?= htmlspecialchars((string) ($c['line2'] ?? '')); ?>">
+                                </div>
+                            </div>
+                            <?php if ($key === 'message'): ?>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Link-Text (z. B. Ticket)</label>
+                                    <input class="form-control" name="contact_message_link_label" value="<?= htmlspecialchars((string) ($c['link_label'] ?? '')); ?>">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Link-URL</label>
+                                    <input class="form-control" name="contact_message_link_url" value="<?= htmlspecialchars((string) ($c['link_url'] ?? '')); ?>" placeholder="<?= htmlspecialchars($helper->url() . 'support'); ?>">
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                            <hr>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <div class="card ts-panel mb-3">
+                        <div class="card-header">Social Media (Footer)</div>
+                        <div class="card-body">
+                            <p class="text-muted small">Leere URLs werden ausgeblendet.</p>
+                            <div class="form-row">
+                                <?php foreach (['facebook' => 'Facebook', 'twitter' => 'Twitter / X', 'instagram' => 'Instagram', 'teamspeak' => 'Teamspeak', 'discord' => 'Discord'] as $key => $label): ?>
+                                <div class="form-group col-md-6">
+                                    <label for="social_<?= $key; ?>"><?= htmlspecialchars($label); ?></label>
+                                    <input id="social_<?= $key; ?>" class="form-control" name="social_<?= $key; ?>" value="<?= htmlspecialchars((string) ($social[$key] ?? '')); ?>" placeholder="https://…">
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card ts-panel mb-3">
+                        <div class="card-header">Footer – Text &amp; Extra-Link</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="footer_about">Kurztext neben Logo</label>
+                                <textarea id="footer_about" class="form-control" name="footer_about" rows="3" placeholder="Kurze Beschreibung …"><?= htmlspecialchars((string) ($footer['about'] ?? '')); ?></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="footer_extra_link_label">Extra-Link (Spalte „Links“) – Text</label>
+                                    <input id="footer_extra_link_label" class="form-control" name="footer_extra_link_label" value="<?= htmlspecialchars((string) ($footer['extra_link_label'] ?? '')); ?>">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="footer_extra_link_url">Extra-Link – URL</label>
+                                    <input id="footer_extra_link_url" class="form-control" name="footer_extra_link_url" value="<?= htmlspecialchars((string) ($footer['extra_link_url'] ?? '')); ?>" placeholder="https://…">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card ts-panel mb-3">
+                        <div class="card-header">Footer – Legal-Links</div>
+                        <div class="card-body">
+                            <?php
+                            $legalMeta = [
+                                'impressum' => 'Impressum',
+                                'datenschutz' => 'Datenschutz',
+                                'agb' => 'AGB',
+                                'widerruf' => 'Widerruf',
+                                'hoster' => 'Teaspeak Hoster (extern)',
+                            ];
+                            foreach ($legalMeta as $key => $hint):
+                                $item = $legalByKey[$key] ?? ['label' => '', 'url' => ''];
+                            ?>
+                            <div class="form-row align-items-end">
+                                <div class="form-group col-md-4">
+                                    <label><?= htmlspecialchars($hint); ?> – Label</label>
+                                    <input class="form-control" name="legal_label_<?= $key; ?>" value="<?= htmlspecialchars((string) ($item['label'] ?? '')); ?>">
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <label>URL</label>
+                                    <input class="form-control" name="legal_url_<?= $key; ?>" value="<?= htmlspecialchars((string) ($item['url'] ?? '')); ?>" placeholder="https://… oder interne Route">
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 
@@ -178,13 +349,13 @@ $faviconUrl = $helper->getFaviconUrl();
                         </div>
                     </div>
 
-                    <button type="submit" name="saveBranding" class="btn btn-primary btn-lg">
+                    <button type="submit" name="saveBranding" class="btn btn-primary btn-lg mb-4">
                         <i class="fas fa-save mr-1"></i> Speichern
                     </button>
                 </div>
 
-                <div class="col-lg-5">
-                    <div class="card ts-panel ts-preview">
+                <div class="col-lg-4">
+                    <div class="card ts-panel ts-preview sticky-top" style="top:1rem;">
                         <div class="card-header">Vorschau</div>
                         <div class="card-body text-center">
                             <div class="ts-preview-brand">

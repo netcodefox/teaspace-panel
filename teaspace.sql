@@ -218,7 +218,8 @@ CREATE TABLE `settings` (
   `support_ts_label` varchar(255) DEFAULT NULL,
   `support_ts_value` varchar(255) DEFAULT NULL,
   `support_phone_label` varchar(255) DEFAULT NULL,
-  `support_phone_value` varchar(255) DEFAULT NULL
+  `support_phone_value` varchar(255) DEFAULT NULL,
+  `site_content` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

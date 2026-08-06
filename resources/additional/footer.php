@@ -27,11 +27,9 @@
                     <div class="col-sm-6 ">
                         <div class="social_icos text-center">
                             <ul class="nav">
-                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-								<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-								<li><a href="#"><i class="fa fa-instagram"></i></a></li>
-								<li><a href="#"><i class="fab fa-teamspeak"></i></a></li>
-								<li><a href="#"><i class="fab fa-discord"></i></a></li>
+                                <?php foreach ($helper->getSocialLinks() as $social): ?>
+                                <li><a href="<?= htmlspecialchars($social['url']); ?>" target="_blank" rel="noopener noreferrer"><i class="<?= htmlspecialchars($social['icon']); ?>"></i></a></li>
+                                <?php endforeach; ?>
                             </ul>
                         </div>
                     </div>
@@ -41,11 +39,18 @@
         </div>
     	<div class="footer-main">
             <div class="container ">
+                <?php
+                $footerContent = $helper->getSiteContent()['footer'] ?? [];
+                $footerAbout = trim((string) ($footerContent['about'] ?? ''));
+                $extraLabel = trim((string) ($footerContent['extra_link_label'] ?? ''));
+                $extraUrl = trim((string) ($footerContent['extra_link_url'] ?? ''));
+                ?>
                 <div class="col-sm-3 col-xs-12">
-                	 <img src="<?= $helper->url(); ?>assets/tea/logowhite.png"  width="200"  alt="">
+                	 <img src="<?= htmlspecialchars($helper->getLogoUrl()); ?>"  width="200"  alt="<?= htmlspecialchars($helper->getDisplayName()); ?>">
 					<hr>
-                    <p>
-                        #<hr>
+                    <?php if ($footerAbout !== ''): ?>
+                    <p><?= nl2br(htmlspecialchars($footerAbout)); ?></p>
+                    <?php endif; ?>
                 </div>
                 <div class="col-sm-2 col-xs-12">
                 	<h4>Produkte</h4>
@@ -58,33 +63,27 @@
 				<div class="col-sm-2 col-xs-12">
                 	<h4>Links</h4>
                     <ul>
-						<li><a href="#">#</a></li>
-						
-						
-
-						
-
+						<?php if ($extraLabel !== '' && $extraUrl !== '' && $extraUrl !== '#'): ?>
+						<li><a href="<?= htmlspecialchars($extraUrl); ?>"><?= htmlspecialchars($extraLabel); ?></a></li>
+						<?php endif; ?>
                     </ul>
                 </div>
                 <div class="col-sm-2 col-xs-12">
                 	
                       <h4>Legal</h4>
                         <ul>
+								<?php foreach ($helper->getFooterLegal() as $legal):
+                                    $label = trim((string) ($legal['label'] ?? ''));
+                                    $url = trim((string) ($legal['url'] ?? ''));
+                                    if ($label === '' || $url === '' || $url === '#' || $url === '###') {
+                                        continue;
+                                    }
+                                    $external = !empty($legal['external']);
+                                ?>
 								<li>
-                                    <a href="<?= $helper->url(); ?>impressum">Impressum</a>
+                                    <a href="<?= htmlspecialchars($url); ?>"<?= $external ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>><?= htmlspecialchars($label); ?></a>
                                 </li>
-                                <li>
-                                    <a href="<?= $helper->url(); ?>datenschutz">Datenschutz</a>
-                                </li>
-                                <li>
-                                    <a href="<?= $helper->url(); ?>agb">AGB</a>
-                                </li>
-								<li>
-                                    <a href="<?= $helper->url(); ?>widerruf">Widerruf</a>
-                                </li>
-								<li>
-                                    <a target="_blank" href="###">Teaspeak Hoster</a>
-                                </li>
+								<?php endforeach; ?>
                         
                     </ul>
                 </div>
@@ -110,9 +109,9 @@
             	<div class="col-sm-12">
             		<p>Copyright 2018 - <script type="text/javascript">
   document.write(new Date().getFullYear());
-</script> Tea-Space.  Alle Rechte vorbehalten.</p>
+</script> <?= htmlspecialchars($helper->getDisplayName()); ?>.  Alle Rechte vorbehalten.</p>
 					<b>Gem. §19 UStG wird die Mehrwertsteuer in der Rechnung nicht ausgewiesen.</b><br>
-					<b>Tea-Space ist ein Projekt von Nico Jeffrey Bary.</b><br>
+					<b><?= htmlspecialchars($helper->getDisplayName()); ?> ist ein Projekt von Nico Jeffrey Bary.</b><br>
 					<b>Made with ? in Heinsberg - Germany</b><br>
 					<b><i class="fas fa-cog fa-spin fa-1x" style="font-size:16px"></i> Version: 1.0.7 (29.05.2021)</b><br>
                 </div>
