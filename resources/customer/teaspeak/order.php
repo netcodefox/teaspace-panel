@@ -2,154 +2,105 @@
 $currPage = 'front_Teaspeak';
 include 'app/controller/PageController.php';
 include 'app/manager/customer/teaspeak/order.php';
+
+$unitPrice = (float) $site->getProductPrice('TEASPEAK');
+$loggedIn = $user->sessionExists($_COOKIE['session_token'] ?? '');
 ?>
 
+<section class="tf-page-hero">
+    <div class="container">
+        <h1 class="tf-section-title">TeaSpeak</h1>
+        <p class="tf-section-sub">Eigenständige Sprachkommunikation – unabhängig von Teamspeak. Wähle Slots und Laufzeit.</p>
+    </div>
+</section>
 
+<section class="tf-section" style="padding-top:0;">
+    <div class="container">
+        <form method="post" id="orderForm" class="tf-order-grid">
+            <div class="tf-order-config">
+                <div class="tf-order-field">
+                    <div class="tf-order-label-row">
+                        <label for="slots">Slots</label>
+                        <span class="tf-order-live" data-slots>10</span>
+                    </div>
+                    <input id="slots" name="slots" type="range" min="10" max="1000" value="10" class="tf-range" aria-valuemin="10" aria-valuemax="1000">
+                    <div class="tf-range-hints"><span>10</span><span>1000</span></div>
+                </div>
 
-
-
-<style>
-	.slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 10px;
-  border-radius: 50px;
-  background: rgba(255,255,255,0.12);
-  outline: none;
-}
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #14b8a6;
-  cursor: pointer;
-}
-.slider::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #14b8a6;
-  cursor: pointer;
-  border: 0;
-}
-</style>
-
-
-
-
- <!--Cloud Slider-->
-    <section class="section-spacing p-top80 tf-section">
-        <section class="row pricing pricing2 p-bottom40">
-            <div class="container">
-                <div class="sectionTitle">
-                    <h2 class="tf-section-title">TeaSpeak</h2>
-                    <p class="tf-section-sub">Eigenständige Sprachkommunikation – unabhängig von Teamspeak. Wähle Slots und Laufzeit.</p>
+                <div class="tf-order-field">
+                    <label for="duration">Laufzeit</label>
+                    <select id="duration" name="duration" class="form-control">
+                        <option value="30" data-factor="1">30 Tage</option>
+                        <option value="60" data-factor="2">60 Tage</option>
+                        <option value="90" data-factor="3">90 Tage</option>
+                    </select>
                 </div>
             </div>
-        </section>
- 
-        <div class="container">
-            <div class="row">
-            	<!-- begain the Slider -->
-                <div id="qsSlider" class="tf-order-panel">
-                    <div class="col-sm-8">
-                        <div id="QsControls">
-							 <form method="post" id="orderForm">
-                            <h4 class="title">Slots</h4>
-                                        <input  id="slots" name="slots" type="range" min="10" max="1000" value="10" class="slider">
-                            <h4 class="title">Laufzeit</h4>
-                            <select id="duration" name="duration" class="form-control">
-                                            <option value="30" data-factor="1">30 Tage</option>
-                                            <option value="60" data-factor="2">60 Tage</option>
-                                            <option value="90" data-factor="3">90 Tage</option>
-                                        </select>
-                        </div>
-                    </div>
 
-                    <div class="col-sm-4">
-                        <div id="QsPrice">
-                            <div class="prices tf-order-summary">
-                                <div id="pricetext" class="relative">
-                                    <h5>Slots</h5>
-                                    <span data-slots="" id="doller">0</span>
-                                    <br>
-									<h5>Preis</h5>
-                                    <span id="doller"  data-amount="" class="doller">0.00€</span>
-                                    <span id="btext">/mo</span>
-                                </div>
-                               <br>
-                            	 <?php if($user->sessionExists($_COOKIE['session_token'] ?? '')){ ?>
-                                            <div class="custom-control custom-checkbox mb-2">
-                                                <label><input type="checkbox" id="agb" required> AGB akzeptieren</label>
-                                            </div>
-                                            <div class="custom-control custom-checkbox mb-3">
-                                                <label><input type="checkbox" id="wiederruf" required> Widerruf zur Kenntnis genommen</label>
-                                            </div>
-                                            <button onclick="orderNow();" id="orderBtn" type="submit" name="order" class="btn btn-primary btn-xlg btn-block">Kostenpflichtig bestellen</button>
-                                            <script>
-                                                function orderNow() {
-                                                    if(document.getElementById("agb").checked){
-                                                        if(document.getElementById("wiederruf").checked){
-                                                            document.getElementById("orderForm").submit();
-                                                            const button = document.getElementById('orderBtn');
-                                                            button.disabled = true;
-                                                            button.innerHTML = 'Bestellung wird ausgeführt...';
-                                                        }
-                                                    }
-                                                }
-                                            </script>
-                                        <?php } else { ?>
-                                            <a href="<?= $helper->url(); ?>register" class="btn btn-primary btn-xlg btn-block">Account erstellen</a>
-                                        <?php } ?>
-								</form>
-                            </div>
-                        </div>
-                    </div>
+            <aside class="tf-order-summary-card">
+                <h2>Zusammenfassung</h2>
+                <div class="tf-order-row">
+                    <span>Slots</span>
+                    <strong data-slots>10</strong>
                 </div>
-            </div>
-         </div>
-    </section>
+                <div class="tf-order-row">
+                    <span>Preis</span>
+                    <strong><span data-amount>0,00</span> € <small>/ Monat</small></strong>
+                </div>
+                <p class="tf-order-note"><?= number_format($unitPrice, 2, ',', '.'); ?> € pro Slot / 30 Tage</p>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                <?php if ($loggedIn): ?>
+                    <label class="tf-check">
+                        <input type="checkbox" id="agb" required>
+                        <span>AGB akzeptieren</span>
+                    </label>
+                    <label class="tf-check">
+                        <input type="checkbox" id="wiederruf" required>
+                        <span>Widerruf zur Kenntnis genommen</span>
+                    </label>
+                    <button type="submit" name="order" id="orderBtn" class="btn btn-primary btn-xlg btn-block">Kostenpflichtig bestellen</button>
+                <?php else: ?>
+                    <a href="<?= $helper->url(); ?>register" class="btn btn-primary btn-xlg btn-block">Account erstellen</a>
+                <?php endif; ?>
+            </aside>
+        </form>
+    </div>
+</section>
 
 <script>
+(function () {
+  var unit = <?= json_encode($unitPrice); ?>;
+  var slotsEl = document.getElementById('slots');
+  var durationEl = document.getElementById('duration');
+  var form = document.getElementById('orderForm');
 
-    $('#slots').on('input', function() {update();});
-    $("select, textarea").change(function() { update(); } ).trigger("change");
+  function update() {
+    var slots = Math.min(1000, Math.max(10, parseInt(slotsEl.value, 10) || 10));
+    slotsEl.value = slots;
+    var factor = parseFloat(durationEl.options[durationEl.selectedIndex].getAttribute('data-factor')) || 1;
+    var price = (slots * unit * factor).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.querySelectorAll('[data-slots]').forEach(function (n) { n.textContent = String(slots); });
+    document.querySelectorAll('[data-amount]').forEach(function (n) { n.textContent = price; });
+  }
 
-    function update(){
-		
-		var slots = $('#slots').val();
-		
-		if(slots > 1000){
-			$('#slots').val(1000);
-		}
-		
-        var sum = $("#slots").val() * <?= $site->getProductPrice('TEASPEAK'); ?>;
-        var price = Number(sum * $("#duration").find("option:selected").data("factor"))
-            .toLocaleString("de-DE", {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        $('#price_post').val(price);
-        $('#slots').val(slots);
-        $("*[data-amount]").html(price );
-        $("*[data-slots]").html(slots );
-    }
+  slotsEl.addEventListener('input', update);
+  durationEl.addEventListener('change', update);
+  update();
 
-    $(document).ready(function(){
-        update();
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      var agb = document.getElementById('agb');
+      var wid = document.getElementById('wiederruf');
+      if (agb && wid && (!agb.checked || !wid.checked)) {
+        e.preventDefault();
+        return;
+      }
+      var btn = document.getElementById('orderBtn');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Bestellung wird ausgeführt…';
+      }
     });
+  }
+})();
 </script>

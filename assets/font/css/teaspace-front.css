@@ -48,6 +48,21 @@ h4.text-gredient1,
 
 .text-shadow1 { text-shadow: none !important; }
 
+.sectionTitle h2:after,
+.sectionTitle h2::after {
+  display: none !important;
+  background: none !important;
+}
+
+#QsPrice,
+.prices,
+.tf-order-summary,
+.pricing .prices {
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .bg-gray,
 .bg_white,
 .bg-pattern,
@@ -553,7 +568,139 @@ footer.row,
   border-radius: 999px !important;
 }
 
-/* Order */
+/* Order page */
+.tf-page-hero {
+  padding: 3rem 0 1.5rem;
+  border-bottom: 1px solid var(--tf-line);
+  background:
+    radial-gradient(600px 280px at 80% 0%, rgba(20, 184, 166, 0.12), transparent 60%),
+    var(--tf-bg);
+}
+.tf-page-hero .tf-section-sub { margin-bottom: 0; }
+
+.tf-order-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr;
+  gap: 1.5rem;
+  align-items: start;
+  margin-top: 1.75rem;
+}
+.tf-order-config,
+.tf-order-summary-card {
+  background: var(--tf-surface);
+  border: 1px solid var(--tf-line);
+  border-radius: var(--tf-radius);
+  padding: 1.5rem;
+  box-shadow: var(--tf-shadow);
+}
+.tf-order-field { margin-bottom: 1.5rem; }
+.tf-order-field:last-child { margin-bottom: 0; }
+.tf-order-field label,
+.tf-order-label-row label {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--tf-muted);
+  margin-bottom: 0.65rem;
+}
+.tf-order-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.tf-order-live {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--tf-accent);
+  letter-spacing: -0.03em;
+}
+.tf-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.1);
+  outline: none;
+}
+.tf-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--tf-accent);
+  cursor: pointer;
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.2);
+}
+.tf-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--tf-accent);
+  cursor: pointer;
+}
+.tf-range-hints {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--tf-muted);
+}
+.tf-order-summary-card h2 {
+  margin: 0 0 1.1rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--tf-text);
+}
+.tf-order-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--tf-line);
+  color: var(--tf-muted);
+}
+.tf-order-row strong {
+  color: var(--tf-text);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+.tf-order-row small {
+  font-weight: 600;
+  color: var(--tf-muted);
+  font-size: 0.8rem;
+}
+.tf-order-note {
+  margin: 0.85rem 0 1.15rem;
+  font-size: 0.85rem;
+  color: var(--tf-muted);
+}
+.tf-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin-bottom: 0.75rem;
+  color: var(--tf-muted);
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+.tf-check input {
+  margin-top: 0.2rem;
+  accent-color: var(--tf-accent);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .tf-order-grid { grid-template-columns: 1fr; }
+}
+
+/* Order page */
 .tf-order-panel {
   background: var(--tf-surface);
   border: 1px solid var(--tf-line);
