@@ -100,6 +100,11 @@ class Helper extends Controller
             if (!in_array('site_content', $cols, true)) {
                 $alters[] = "ADD COLUMN `site_content` longtext DEFAULT NULL";
             }
+            foreach (['page_impressum', 'page_datenschutz', 'page_agb', 'page_widerruf'] as $pageCol) {
+                if (!in_array($pageCol, $cols, true)) {
+                    $alters[] = "ADD COLUMN `{$pageCol}` longtext DEFAULT NULL";
+                }
+            }
             if ($alters) {
                 $db->exec('ALTER TABLE `settings` ' . implode(', ', $alters));
             }
@@ -264,6 +269,52 @@ class Helper extends Controller
     {
         $legal = $this->getSiteContent()['footer']['legal'] ?? [];
         return is_array($legal) ? $legal : [];
+    }
+
+    public function legalPageKeys(): array
+    {
+        return [
+            'impressum' => 'Impressum',
+            'datenschutz' => 'Datenschutz',
+            'agb' => 'AGB',
+            'widerruf' => 'Widerruf',
+        ];
+    }
+
+    public function getLegalPageDefault(string $key): string
+    {
+        $file = __DIR__ . '/../../resources/content/legal/' . $key . '.html';
+        if (is_file($file)) {
+            $html = file_get_contents($file);
+            if (!is_string($html)) {
+                return '';
+            }
+            return preg_replace('/^\xEF\xBB\xBF/', '', $html) ?? $html;
+        }
+        return '';
+    }
+
+    public function getLegalPage(string $key): string
+    {
+        $keys = $this->legalPageKeys();
+        if (!isset($keys[$key])) {
+            return '';
+        }
+        $col = 'page_' . $key;
+        $stored = $this->getSetting($col);
+        if (is_string($stored) && trim($stored) !== '') {
+            return $stored;
+        }
+        return $this->getLegalPageDefault($key);
+    }
+
+    public function setLegalPage(string $key, string $html): void
+    {
+        $keys = $this->legalPageKeys();
+        if (!isset($keys[$key])) {
+            throw new InvalidArgumentException('Unbekannte Rechtsseite.');
+        }
+        $this->setSettings(['page_' . $key => $html]);
     }
 
     public function setSettings(array $fields): void

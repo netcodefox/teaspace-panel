@@ -397,6 +397,24 @@ ul.home-timeline > li:before {
   border-color: var(--ts-accent) !important;
 }
 
+.nav-pills .nav-link {
+  color: var(--ts-muted) !important;
+  border-radius: 999px !important;
+}
+.nav-pills .nav-link.active {
+  background: rgba(20, 184, 166, 0.2) !important;
+  color: var(--ts-text) !important;
+}
+.note-editor.note-frame {
+  background: var(--ts-surface-2);
+  border-color: var(--ts-line) !important;
+  color: var(--ts-text);
+}
+.note-editor .note-editing-area .note-editable {
+  background: var(--ts-surface) !important;
+  color: var(--ts-text) !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation: none !important;

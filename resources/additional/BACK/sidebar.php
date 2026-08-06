@@ -102,6 +102,12 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="<?= $helper->url(); ?>team/legal">
+              <i class="nav-icon fas fa-balance-scale"></i>
+              <p>Rechtstexte</p>
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="<?= $helper->url(); ?>team/transactions">
               <i class="nav-icon fas fa-euro-sign"></i>
               <p>Transaktionen</p>
