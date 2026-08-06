@@ -42,7 +42,7 @@ if(isset($_POST['renew'])){
         $date->modify('+' . $_POST['duration'] . ' day');
         $expire_at = $date->format('Y-m-d H:i:s');
 
-        $SQLGetServerInfos = $db->prepare("UPDATE `teaspeaks` SET `expire_at` = :expire_at, `state` = 'active' WHERE `id` = :id");
+        $SQLGetServerInfos = $db->prepare("UPDATE `teaspeaks` SET `expire_at` = :expire_at, `state` = 'ACTIVE' WHERE `id` = :id");
         $SQLGetServerInfos -> execute(array(":expire_at" => $expire_at, ":id" => $id));
 
         $user->removeMoney($price, $userid);
