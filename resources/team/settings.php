@@ -168,16 +168,28 @@ foreach ($footer['legal'] as $item) {
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="logo">Logo (PNG/JPG/WEBP/SVG)</label>
-                                    <input id="logo" class="form-control-file" type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
-                                    <div class="custom-control custom-checkbox mt-2">
+                                    <div class="ts-file">
+                                        <input id="logo" class="ts-file-input" type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+                                        <label for="logo" class="btn btn-outline-secondary ts-file-btn">
+                                            <i class="fas fa-upload mr-1"></i> Datei auswählen
+                                        </label>
+                                        <span class="ts-file-name" data-for="logo">Keine Datei ausgewählt</span>
+                                    </div>
+                                    <div class="custom-control custom-checkbox mt-3">
                                         <input type="checkbox" class="custom-control-input" id="reset_logo" name="reset_logo" value="1">
                                         <label class="custom-control-label" for="reset_logo">Standard-Logo wiederherstellen</label>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="favicon">Favicon</label>
-                                    <input id="favicon" class="form-control-file" type="file" name="favicon" accept="image/png,image/jpeg,image/webp,image/x-icon,image/vnd.microsoft.icon,image/svg+xml">
-                                    <div class="custom-control custom-checkbox mt-2">
+                                    <div class="ts-file">
+                                        <input id="favicon" class="ts-file-input" type="file" name="favicon" accept="image/png,image/jpeg,image/webp,image/x-icon,image/vnd.microsoft.icon,image/svg+xml">
+                                        <label for="favicon" class="btn btn-outline-secondary ts-file-btn">
+                                            <i class="fas fa-upload mr-1"></i> Datei auswählen
+                                        </label>
+                                        <span class="ts-file-name" data-for="favicon">Keine Datei ausgewählt</span>
+                                    </div>
+                                    <div class="custom-control custom-checkbox mt-3">
                                         <input type="checkbox" class="custom-control-input" id="reset_favicon" name="reset_favicon" value="1">
                                         <label class="custom-control-label" for="reset_favicon">Standard-Favicon wiederherstellen</label>
                                     </div>
@@ -371,3 +383,20 @@ foreach ($footer['legal'] as $item) {
         </div>
     </div>
 </div>
+<script>
+(function () {
+  document.querySelectorAll('.ts-file-input').forEach(function (input) {
+    input.addEventListener('change', function () {
+      var nameEl = document.querySelector('.ts-file-name[data-for="' + input.id + '"]');
+      if (!nameEl) return;
+      if (input.files && input.files[0]) {
+        nameEl.textContent = input.files[0].name;
+        nameEl.classList.add('has-file');
+      } else {
+        nameEl.textContent = 'Keine Datei ausgewählt';
+        nameEl.classList.remove('has-file');
+      }
+    });
+  });
+})();
+</script>
