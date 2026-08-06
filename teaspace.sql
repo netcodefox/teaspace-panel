@@ -425,7 +425,7 @@ CREATE TABLE `voucher_codes` (
 -- Daten für Tabelle `voucher_codes`
 --
 
-INSERT INTO `voucher_codes` (`id`, `code`, `amount`, `created_at`, `updated_at`) VALUES
+-- --------------------------------------------------------
 
 --
 -- Indizes der exportierten Tabellen

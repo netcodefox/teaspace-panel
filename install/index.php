@@ -158,27 +158,39 @@ function install_import_sql(PDO $pdo): void
         throw new RuntimeException('teaspace.sql konnte nicht gelesen werden.');
     }
 
-    // Strip comments / phpMyAdmin meta
+    $sql = str_replace(["\r\n", "\r"], "\n", $sql);
+    // Strip SQL comments
     $sql = preg_replace('/^--.*$/m', '', $sql);
     $sql = preg_replace('/\/\*![0-9]{5}.*?\*\//s', '', $sql);
 
+    $pdo->exec('SET NAMES utf8mb4');
     $pdo->exec('SET FOREIGN_KEY_CHECKS=0');
-    $buffer = '';
-    foreach (explode(";\n", str_replace("\r\n", "\n", $sql)) as $chunk) {
-        $chunk = trim($chunk);
-        if ($chunk === '') {
+
+    $statements = preg_split('/;\s*\n/', $sql) ?: [];
+    foreach ($statements as $statement) {
+        $statement = trim($statement);
+        if ($statement === '' || $statement === 'COMMIT' || $statement === 'START TRANSACTION') {
             continue;
         }
-        $buffer = $chunk;
+        // Skip incomplete INSERT ... VALUES without any rows
+        if (preg_match('/^INSERT\s+INTO\b.+\bVALUES\s*$/is', $statement)) {
+            continue;
+        }
+
         try {
-            $pdo->exec($buffer);
+            $pdo->exec($statement);
         } catch (PDOException $e) {
-            // Ignore empty / duplicate noise where possible
-            if (stripos($e->getMessage(), 'already exists') === false) {
-                throw new RuntimeException('SQL-Fehler: ' . $e->getMessage() . ' — Statement: ' . substr($buffer, 0, 120));
+            $msg = $e->getMessage();
+            if (
+                stripos($msg, 'already exists') !== false
+                || stripos($msg, 'Duplicate') !== false
+            ) {
+                continue;
             }
+            throw new RuntimeException('SQL-Fehler: ' . $msg . ' — Statement: ' . substr($statement, 0, 160));
         }
     }
+
     $pdo->exec('SET FOREIGN_KEY_CHECKS=1');
 }
 
