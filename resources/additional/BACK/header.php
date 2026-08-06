@@ -10,14 +10,6 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button" aria-label="Menü"><i class="fas fa-bars"></i></a>
       </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="<?= $helper->url(); ?>" class="nav-link brand-inline">
-          <img src="<?= htmlspecialchars($helper->getLogoUrl()); ?>" alt="" class="brand-inline-logo">
-          <?php if ($helper->showBrandText()): ?>
-          <span><?= htmlspecialchars($helper->getDisplayName()); ?></span>
-          <?php endif; ?>
-        </a>
-      </li>
     </ul>
 
     <ul class="navbar-nav ml-auto align-items-center">
