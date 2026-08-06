@@ -1,39 +1,26 @@
 
 	
 	    <!-- Top Clients -->
-    <section class="row section-spacing3 clients bg_white">
-       <div class="container">
-            <div class="row">
-                <ul class="nav nav-justified">
-				<center>
-                   <li><img src="<?= $helper->url(); ?>assets/300px-Teaspeak_Logo.png" width="100" alt=""></li>
-                  </center>   
-               
-               
-                  
-                       
-                </ul>
-            </div>
+    <section class="row section-spacing3 clients">
+       <div class="container text-center">
+            <img src="<?= $helper->url(); ?>assets/300px-Teaspeak_Logo.png" width="100" alt="TeaSpeak" loading="lazy">
     	</div>
     </section>
-    <!-- Top Clients End-->
-
 
     <!-- Footer -->
     <footer class="row">
         <div class="subscriber">
             <div class="container">
                 <div class="row beInContact ">
-                    <div class="col-sm-6 ">
+                    <div class="col-sm-12 ">
                         <div class="social_icos text-center">
-                            <ul class="nav">
+                            <ul class="nav" style="display:inline-flex;justify-content:center;float:none;">
                                 <?php foreach ($helper->getSocialLinks() as $social): ?>
-                                <li><a href="<?= htmlspecialchars($social['url']); ?>" target="_blank" rel="noopener noreferrer"><i class="<?= htmlspecialchars($social['icon']); ?>"></i></a></li>
+                                <li><a href="<?= htmlspecialchars($social['url']); ?>" target="_blank" rel="noopener noreferrer" aria-label="<?= htmlspecialchars($social['key']); ?>"><i class="<?= htmlspecialchars($social['icon']); ?>"></i></a></li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
                     </div>
-                   
                 </div>
             </div>
         </div>
@@ -46,18 +33,15 @@
                 $extraUrl = trim((string) ($footerContent['extra_link_url'] ?? ''));
                 ?>
                 <div class="col-sm-3 col-xs-12">
-                	 <img src="<?= htmlspecialchars($helper->getLogoUrl()); ?>"  width="200"  alt="<?= htmlspecialchars($helper->getDisplayName()); ?>">
-					<hr>
+                	 <img src="<?= htmlspecialchars($helper->getLogoUrl()); ?>"  width="160"  alt="<?= htmlspecialchars($helper->getDisplayName()); ?>">
                     <?php if ($footerAbout !== ''): ?>
-                    <p><?= nl2br(htmlspecialchars($footerAbout)); ?></p>
+                    <p style="margin-top:1rem;"><?= nl2br(htmlspecialchars($footerAbout)); ?></p>
                     <?php endif; ?>
                 </div>
                 <div class="col-sm-2 col-xs-12">
                 	<h4>Produkte</h4>
                     <ul>
-                        
                         <li><a href="<?= $helper->url(); ?>teaspeak/order">TeaSpeak</a></li>
-                        
                     </ul>
                 </div>
 				<div class="col-sm-2 col-xs-12">
@@ -66,10 +50,10 @@
 						<?php if ($extraLabel !== '' && $extraUrl !== '' && $extraUrl !== '#'): ?>
 						<li><a href="<?= htmlspecialchars($extraUrl); ?>"><?= htmlspecialchars($extraLabel); ?></a></li>
 						<?php endif; ?>
+                        <li><a href="<?= $helper->url(); ?>contact">Kontakt</a></li>
                     </ul>
                 </div>
                 <div class="col-sm-2 col-xs-12">
-                	
                       <h4>Legal</h4>
                         <ul>
 								<?php foreach ($helper->getFooterLegal() as $legal):
@@ -84,22 +68,20 @@
                                     <a href="<?= htmlspecialchars($url); ?>"<?= $external ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>><?= htmlspecialchars($label); ?></a>
                                 </li>
 								<?php endforeach; ?>
-                        
                     </ul>
                 </div>
                 <div class="col-sm-3 col-xs-12">
                 	<h4>Zahlungsmethoden</h4>
                     <ul class="list-inline payment-icons">
-                        <img src="<?= $helper->url(); ?>zahlung/ueberweisung.png" width="100" alt="">
-                        <img src="<?= $helper->url(); ?>zahlung/sofort.png" width="100" alt="">
-					    
-						<img src="<?= $helper->url(); ?>zahlung/paysafecard.png" width="100" alt="">
-						<img src="<?= $helper->url(); ?>zahlung/paypal.png" width="100" alt="">
-						<img src="<?= $helper->url(); ?>zahlung/giropay.png" width="100" alt="">
-						<img src="<?= $helper->url(); ?>zahlung/eps.png" width="100" alt="">
-						<img src="<?= $helper->url(); ?>zahlung/IDEAL.png" width="60" alt="">
+                        <img src="<?= $helper->url(); ?>zahlung/ueberweisung.png" width="90" alt="Überweisung" loading="lazy">
+                        <img src="<?= $helper->url(); ?>zahlung/sofort.png" width="90" alt="Sofort" loading="lazy">
+						<img src="<?= $helper->url(); ?>zahlung/paysafecard.png" width="90" alt="Paysafecard" loading="lazy">
+						<img src="<?= $helper->url(); ?>zahlung/paypal.png" width="90" alt="PayPal" loading="lazy">
+						<img src="<?= $helper->url(); ?>zahlung/giropay.png" width="90" alt="GiroPay" loading="lazy">
+						<img src="<?= $helper->url(); ?>zahlung/eps.png" width="90" alt="EPS" loading="lazy">
+						<img src="<?= $helper->url(); ?>zahlung/IDEAL.png" width="55" alt="iDEAL" loading="lazy">
              		</ul>
-                    <small>Guthaben kann nicht wieder ausgezahlt werden!</small>
+                    <small>Guthaben kann nicht wieder ausgezahlt werden.</small>
                 </div>
             </div>
         </div>
@@ -107,13 +89,9 @@
         <div class="copyright_line">
         	<div class="container">
             	<div class="col-sm-12">
-            		<p>Copyright 2018 - <script type="text/javascript">
-  document.write(new Date().getFullYear());
-</script> <?= htmlspecialchars($helper->getDisplayName()); ?>.  Alle Rechte vorbehalten.</p>
-					<b>Gem. §19 UStG wird die Mehrwertsteuer in der Rechnung nicht ausgewiesen.</b><br>
-					<b><?= htmlspecialchars($helper->getDisplayName()); ?> ist ein Projekt von Nico Jeffrey Bary.</b><br>
-					<b>Made with ? in Heinsberg - Germany</b><br>
-					<b><i class="fas fa-cog fa-spin fa-1x" style="font-size:16px"></i> Version: 1.0.7 (29.05.2021)</b><br>
+            		<p>© 2018–<?= date('Y'); ?> <?= htmlspecialchars($helper->getDisplayName()); ?>. Alle Rechte vorbehalten.</p>
+					<span>Gem. §19 UStG wird die Mehrwertsteuer in der Rechnung nicht ausgewiesen.</span><br>
+					<span>Made in Heinsberg, Germany</span>
                 </div>
             </div>
         </div>

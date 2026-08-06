@@ -1,146 +1,109 @@
 <?php
 $currPage = 'front_Startseite';
 include 'app/controller/PageController.php';
-
-
-
+$brand = $helper->getDisplayName();
 ?>
 
- <!--Why Section -->
-    <section class="row why_choose bg-gray section-spacing">
-        <div class="container">
-            <div class="row sectionTitle p-bottom40">
-                
-                <h2>Warum Wir</h2>
-            </div>
-            <div class="row">
-                <div class="col-sm-4 cause2choose m-top40">
-                    <div class="media bg_white relative border shadow">
-
-                    	
-
-                        <div class="media-left">
-						
-                        	<i class="fas fa-star text-gredient1 text-shadow1 fa-5x"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="text-gredient1">Sofort Online</h4>
-                            <p>Jedes Produkt wird sofort eingerichtet und steht nur wenige Sekunden nach der Bestellung schon zur Verfügung.(Ausgenommen Service)</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-sm-4 cause2choose m-top40">
-                    <div class="media bg_white border shadow">
-                        <div class="media-left">
-                        	<i class="fas fa-microchip text-gredient1 text-shadow1 fa-5x"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="text-gredient1">Hochwertige Hardware</h4>
-                            <p>Alle Server sind mit leistungsstarken Intel/AMD Prozessoren, Nvme SSD-Festplatten und ausfallsicherem Arbeitsspeicher ausgestattet.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4 cause2choose m-top40">
-                    <div class="media bg_white border shadow">
-                        <div class="media-left">
-                        	<i class="fas fa-ticket-alt text-gredient1 text-shadow1 fa-5x"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="text-gredient1 ">Schneller Support</h4>
-                            <p>Unser Kundensupport steht dir über zahlreiche Kontaktmöglichkeiten zur Verfügung, wie zum Beispiel der Livechat, Ticket System oder via TeamSpeak und Telefon. Wann immer du dein Produkt bei uns nutzen möchtest, wir stehen dir bei allen Fragen zur Seite.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4 cause2choose m-top40">
-                    <div class="media bg_white border shadow">
-                        <div class="media-left">
-                        	<i class="fas fa-plug text-gredient1 text-shadow1 fa-5x"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="text-gredient1 ">95,9% Ökostrom</h4>
-                            <p>Ein verantwortlicher Umgang mit der Umwelt ist uns sehr wichtig. Aus diesem Grund laufen alle Server mit 95,9% Ökostrom.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4 cause2choose m-top40">
-                    <div class="media bg_white border shadow">
-                        <div class="media-left">
-                        	<i class="fas fa-shield-alt text-gredient1 text-shadow1 fa-5x"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="text-gredient1">DDoS-Protection </h4>
-                            <p>Unsere Server sind mit einem erweiterten DDoS-Schutz ausgestattet, um dein Produkt auch bei einem Angriff aufrecht erhalten zu können.</p>
-                        </div>
-                    </div>
-                </div>
-				<div class="col-sm-4 cause2choose m-top40">
-                    <div class="media bg_white relative border shadow">
-                        <div class="media-left">
-                        	<i class="fas fa-euro-sign text-gredient1 text-shadow1 fa-5x"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="text-gredient1">Prepaidsystem</h4>
-                            <p>Bei uns gibt es keine Mahnungen. Wenn du dein Produkt nicht mehr möchtest reicht es aus, wenn du es einfach nicht mehr verlängerst.(Ausgenommen sind vertrags Kunden)</p>
-                        </div>
-                    </div>
-                </div>
+<section class="tf-hero">
+    <div class="container">
+        <div class="tf-hero-inner tf-hero-motion">
+            <h1 class="tf-brand"><?= htmlspecialchars($brand); ?></h1>
+            <p class="tf-hero-lead">TeaSpeak Hosting aus Deutschland – in Sekunden online, prepaid und mit Support, wenn du ihn brauchst.</p>
+            <div class="tf-hero-actions">
+                <a class="btn btn-primary btn-xlg" href="<?= $helper->url(); ?>teaspeak/order">TeaSpeak bestellen</a>
+                <a class="tf-btn-ghost" href="<?= $helper->url(); ?>contact">Kontakt</a>
             </div>
         </div>
-    </section>
-	<!--Facts-->
-    <section class="row facts about_us_facts section-spacing bg-pattern">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-3 fact"><i class="fas fa-users fa-5x text-gredient1 text-shadow1"></i><strong class="counter text-gredient1"><?= $user->getAllUser($userid); ?></strong>Registrierte Kunden</div>
-                <div class="col-sm-3 fact"><i class="fas fa-server fa-5x text-gredient9 text-shadow1"></i><strong class="counter text-gredient9"><?= $user->adminserviceCount($userid); ?></strong>Aktive Services</div>
-                <div class="col-sm-3 fact"><i class="fas fa-ticket-alt fa-5x text-gredient4 text-shadow1"></i><strong class="counter text-gredient4"><?= $user->getcloseTicketsAdmin($userid); ?></strong>Gelöste Tickets</div>
-                <div class="col-sm-3 fact"><i class="fas fa-users-cog fa-5x text-gredient7 text-shadow1"></i><strong class="counter text-gredient7"><?= $user->adminsCount($userid); ?></strong>Mitabeiter</div>
-            </div>
-        </div>
-    </section>
-    <!--Facts End-->
-	<!--Testimonials-->
-<!-- Blog Posts -->
-    <section class="section-spacing bg-gray">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-12">
-              <div class="row sectionTitle text-center p-bottom40">
-                <h2>Letzte News</h2>
-               
-              </div>
+    </div>
+</section>
 
-              <div class="latest_news row m0">
-<?php
-                        $SQL = $db -> prepare("SELECT * FROM `news` ORDER BY `id` DESC LIMIT 3;");
-                        $SQL->execute();
-                        if ($SQL->rowCount() != 0) {
-                        while ($row = $SQL -> fetch(PDO::FETCH_ASSOC)){
-                        ?>
-                <div class="col-sm-4  m-top40">
-                  <div class="post media border shadow radius">
-                    
-                    <div class="media-body">
-                      <h5><?= $row['icon']; ?></h5>
-                      <p><?= $helper->nl2br2($row['message']); ?></p>
-                     	<div class="sr-blog-meta">
-                            <ul class="list-inline">
-							
-                                <li><a href="#"><i class="fa fa-user-circle" aria-hidden="true"></i> <?= $user->getDataById($row['user_id'], 'username'); ?> </a></li>
-                                <li><a href="#"><i class="fa fa-calendar" aria-hidden="true"></i> <?=  $site->formatDateWithoutTime($row['created_at']); ?> </a></li>
-                                <li><a href="#"><i class="fas fa-user-tag" aria-hidden="true"></i> <?= $user->getDataById($row['user_id'], 'role'); ?></a></li>
-                            </ul>
-                        </div>
-                    </div>
-                  </div>
-                </div>
-   <?php } } ?>
-                
-                
-              </div>
-            </div>
-          </div>
+<section class="tf-section">
+    <div class="container">
+        <h2 class="tf-section-title">Warum <?= htmlspecialchars($brand); ?></h2>
+        <p class="tf-section-sub">Klarer Fokus auf stabile Voice-Server – ohne Ballast.</p>
+        <div class="tf-features">
+            <article class="tf-feature">
+                <i class="fas fa-bolt" aria-hidden="true"></i>
+                <h3>Sofort online</h3>
+                <p>Produkte werden direkt eingerichtet und stehen kurz nach der Bestellung bereit.</p>
+            </article>
+            <article class="tf-feature">
+                <i class="fas fa-microchip" aria-hidden="true"></i>
+                <h3>Starke Hardware</h3>
+                <p>Leistungsfähige CPUs, NVMe-SSDs und ausfallsicherer Speicher.</p>
+            </article>
+            <article class="tf-feature">
+                <i class="fas fa-headset" aria-hidden="true"></i>
+                <h3>Schneller Support</h3>
+                <p>Ticket, Telefon und TeamSpeak – wir helfen, wenn etwas hakt.</p>
+            </article>
+            <article class="tf-feature">
+                <i class="fas fa-leaf" aria-hidden="true"></i>
+                <h3>Ökostrom</h3>
+                <p>Unsere Server laufen mit einem hohen Anteil an Ökostrom.</p>
+            </article>
+            <article class="tf-feature">
+                <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                <h3>DDoS-Schutz</h3>
+                <p>Erweiterter Schutz hält deine Instanz auch unter Last erreichbar.</p>
+            </article>
+            <article class="tf-feature">
+                <i class="fas fa-wallet" aria-hidden="true"></i>
+                <h3>Prepaid</h3>
+                <p>Keine Mahnungen: nicht verlängern heißt automatisch beenden.</p>
+            </article>
         </div>
-    </section>
-	
+    </div>
+</section>
+
+<section class="tf-section tf-section-alt">
+    <div class="container">
+        <div class="tf-stats">
+            <div class="tf-stat">
+                <strong class="counter"><?= (int) $user->getAllUser($userid ?? 0); ?></strong>
+                <span>Registrierte Kunden</span>
+            </div>
+            <div class="tf-stat">
+                <strong class="counter"><?= (int) $user->adminserviceCount($userid ?? 0); ?></strong>
+                <span>Aktive Services</span>
+            </div>
+            <div class="tf-stat">
+                <strong class="counter"><?= (int) $user->getcloseTicketsAdmin($userid ?? 0); ?></strong>
+                <span>Gelöste Tickets</span>
+            </div>
+            <div class="tf-stat">
+                <strong class="counter"><?= (int) $user->adminsCount($userid ?? 0); ?></strong>
+                <span>Mitarbeiter</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="tf-section">
+    <div class="container">
+        <h2 class="tf-section-title">Letzte News</h2>
+        <p class="tf-section-sub">Kurze Updates aus dem Panel.</p>
+        <div class="tf-news">
+            <?php
+            $SQL = $db->prepare('SELECT * FROM `news` ORDER BY `id` DESC LIMIT 3');
+            $SQL->execute();
+            if ($SQL->rowCount() != 0) {
+                while ($row = $SQL->fetch(PDO::FETCH_ASSOC)) {
+                    ?>
+                    <article class="tf-news-item">
+                        <h3><?= htmlspecialchars((string) $row['icon']); ?></h3>
+                        <p><?= $helper->nl2br2(htmlspecialchars((string) $row['message'])); ?></p>
+                        <div class="tf-news-meta">
+                            <span><i class="fa fa-user-circle" aria-hidden="true"></i> <?= htmlspecialchars((string) $user->getDataById($row['user_id'], 'username')); ?></span>
+                            <span><i class="fa fa-calendar" aria-hidden="true"></i> <?= htmlspecialchars($site->formatDateWithoutTime($row['created_at'])); ?></span>
+                        </div>
+                    </article>
+                    <?php
+                }
+            } else {
+                echo '<p class="tf-section-sub">Aktuell keine News.</p>';
+            }
+            ?>
+        </div>
+    </div>
+</section>
