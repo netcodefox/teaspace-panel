@@ -312,7 +312,7 @@ class Helper extends Controller
                 ],
             ],
             'header' => [
-                'show_brand_text' => true,
+                'show_brand_text' => false,
                 'tagline' => 'Hosting aus Deutschland',
             ],
             'nav' => [
@@ -362,10 +362,27 @@ class Helper extends Controller
         return $out;
     }
 
+    public function hasLogoImage(): bool
+    {
+        $path = $this->getSetting('logo_path');
+        if (is_string($path) && trim($path) !== '') {
+            $abs = __DIR__ . '/../../' . ltrim(str_replace('\\', '/', $path), '/');
+            if (is_file($abs)) {
+                return true;
+            }
+        }
+        return is_file(__DIR__ . '/../../assets/tea/logo.png')
+            || is_file(__DIR__ . '/../../assets/logonew.png');
+    }
+
     public function showBrandText(): bool
     {
+        // Logo enthält bereits den Markennamen – kein doppelter Text daneben
+        if ($this->hasLogoImage()) {
+            return false;
+        }
         $header = $this->getSiteContent()['header'] ?? [];
-        return !isset($header['show_brand_text']) || (bool) $header['show_brand_text'];
+        return !empty($header['show_brand_text']);
     }
 
     public function getHeaderTagline(): string

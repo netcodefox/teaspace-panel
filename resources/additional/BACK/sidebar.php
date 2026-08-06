@@ -8,7 +8,7 @@ $isAdminUser = $user->isAdmin($sessionToken);
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="<?= $helper->url() . ($inAcp ? 'team/dashboard' : 'dashboard'); ?>" class="brand-link">
       <img src="<?= htmlspecialchars($helper->getLogoUrl()); ?>" alt="<?= htmlspecialchars($helper->getDisplayName()); ?>" class="brand-image">
-      <span class="brand-text"><?= htmlspecialchars($helper->getDisplayName()); ?></span>
+      <span class="brand-text"><?= $helper->showBrandText() ? htmlspecialchars($helper->getDisplayName()) : ''; ?></span>
     </a>
 
     <div class="sidebar">

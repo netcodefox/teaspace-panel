@@ -185,18 +185,23 @@ foreach ($footer['legal'] as $item) {
                         <div class="card-header">Markenauftritt</div>
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="display_name">Anzeigename (Header / Brand)</label>
-                                <input id="display_name" class="form-control" name="display_name" value="<?= htmlspecialchars((string) $displayName); ?>" placeholder="TeaSpeak">
-                                <small class="form-text text-muted">Erscheint neben dem Logo in Header und Sidebar.</small>
+                                <label for="display_name">Anzeigename</label>
+                                <input id="display_name" class="form-control" name="display_name" value="<?= htmlspecialchars((string) $displayName); ?>" placeholder="TEA-Space">
+                                <small class="form-text text-muted">Für Seitentitel, Footer und Systemtexte. Neben dem Logo wird er nicht angezeigt, sobald ein Logo vorhanden ist.</small>
                             </div>
                             <div class="form-group">
                                 <label for="header_tagline">Header-Tagline (Top-Leiste)</label>
                                 <input id="header_tagline" class="form-control" name="header_tagline" value="<?= htmlspecialchars((string) ($headerCfg['tagline'] ?? '')); ?>" placeholder="Hosting aus Deutschland">
                             </div>
+                            <?php if (!$helper->hasLogoImage()): ?>
                             <div class="custom-control custom-checkbox mb-3">
-                                <input type="checkbox" class="custom-control-input" id="show_brand_text" name="show_brand_text" value="1" <?= !empty($headerCfg['show_brand_text']) || !isset($headerCfg['show_brand_text']) ? 'checked' : ''; ?>>
-                                <label class="custom-control-label" for="show_brand_text">Anzeigenamen neben dem Logo anzeigen</label>
+                                <input type="checkbox" class="custom-control-input" id="show_brand_text" name="show_brand_text" value="1" <?= !empty($headerCfg['show_brand_text']) ? 'checked' : ''; ?>>
+                                <label class="custom-control-label" for="show_brand_text">Anzeigenamen statt Logo anzeigen (nur ohne Logo-Datei)</label>
                             </div>
+                            <?php else: ?>
+                            <input type="hidden" name="show_brand_text" value="0">
+                            <p class="text-muted small mb-3">Logo ist gesetzt – der Anzeigename erscheint nicht neben dem Logo.</p>
+                            <?php endif; ?>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="logo">Logo (PNG/JPG/WEBP/SVG)</label>
@@ -423,7 +428,9 @@ foreach ($footer['legal'] as $item) {
                         <div class="card-body text-center">
                             <div class="ts-preview-brand">
                                 <img src="<?= htmlspecialchars($logoUrl); ?>" alt="Logo" class="ts-preview-logo">
+                                <?php if ($helper->showBrandText()): ?>
                                 <div class="ts-preview-name"><?= htmlspecialchars((string) $displayName); ?></div>
+                                <?php endif; ?>
                             </div>
                             <p class="text-muted mb-2">Favicon</p>
                             <img src="<?= htmlspecialchars($faviconUrl); ?>" alt="Favicon" class="ts-preview-fav">
