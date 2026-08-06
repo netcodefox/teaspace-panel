@@ -25,11 +25,15 @@ if (isset($_POST['saveLegal'])) {
             $html = $helper->getLegalPageDefault($key);
         }
         $helper->setLegalPage($key, $html);
-        $active = $key;
-        echo sendSuccess($pages[$key] . ' gespeichert.');
+        header('Location: ' . $helper->url() . 'team/legal/' . rawurlencode($key) . '?saved=1');
+        exit;
     } catch (Throwable $e) {
         echo sendError($e->getMessage());
     }
+}
+
+if (!empty($_GET['saved'])) {
+    echo sendSuccess(($pages[$active] ?? 'Seite') . ' gespeichert.');
 }
 
 $content = $helper->getLegalPage($active);
@@ -45,26 +49,26 @@ $content = $helper->getLegalPage($active);
 
     <div class="content">
         <div class="container-fluid">
-            <ul class="nav nav-pills mb-3">
+            <ul class="nav nav-pills mb-3 flex-wrap">
                 <?php foreach ($pages as $key => $label): ?>
                 <li class="nav-item">
-                    <a class="nav-link <?= $active === $key ? 'active' : ''; ?>" href="<?= $helper->url(); ?>team/legal?tab=<?= urlencode($key); ?>">
+                    <a class="nav-link <?= $active === $key ? 'active' : ''; ?>" href="<?= $helper->url(); ?>team/legal/<?= rawurlencode($key); ?>">
                         <?= htmlspecialchars($label); ?>
                     </a>
                 </li>
                 <?php endforeach; ?>
             </ul>
 
-            <form method="post">
+            <form method="post" action="<?= $helper->url(); ?>team/legal/<?= rawurlencode($active); ?>">
                 <input type="hidden" name="page_key" value="<?= htmlspecialchars($active); ?>">
                 <div class="card ts-panel mb-3">
-                    <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
                         <span><?= htmlspecialchars($pages[$active]); ?></span>
-                        <a class="btn btn-sm btn-outline-secondary" href="<?= $helper->url() . $active; ?>" target="_blank" rel="noopener">Vorschau öffnen</a>
+                        <a class="btn btn-sm btn-outline-secondary" href="<?= $helper->url() . rawurlencode($active); ?>" target="_blank" rel="noopener">Vorschau öffnen</a>
                     </div>
                     <div class="card-body">
                         <textarea id="page_html" name="page_html" class="form-control" rows="22"><?= htmlspecialchars($content); ?></textarea>
-                        <small class="form-text text-muted mt-2">HTML ist erlaubt. Leer lassen und „Standard laden“ setzt den ursprünglichen Text zurück.</small>
+                        <small class="form-text text-muted mt-2">HTML ist erlaubt. Mit der Checkbox unten kannst du beim Speichern den Standard-Inhalt laden.</small>
                         <div class="custom-control custom-checkbox mt-3">
                             <input type="checkbox" class="custom-control-input" id="reset_default" name="reset_default" value="1">
                             <label class="custom-control-label" for="reset_default">Beim Speichern Standard-Inhalt aus Datei laden</label>
@@ -84,6 +88,7 @@ $(function () {
   if ($.fn.summernote) {
     $('#page_html').summernote({
       height: 420,
+      width: '100%',
       toolbar: [
         ['style', ['style']],
         ['font', ['bold', 'italic', 'underline', 'clear']],

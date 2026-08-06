@@ -579,19 +579,38 @@ ul.home-timeline > li:before {
 .nav-pills .nav-link {
   color: var(--ts-muted) !important;
   border-radius: 999px !important;
+  pointer-events: auto;
 }
 .nav-pills .nav-link.active {
   background: rgba(20, 184, 166, 0.2) !important;
   color: var(--ts-text) !important;
 }
+.nav-pills .nav-link:hover {
+  color: var(--ts-text) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
 .note-editor.note-frame {
   background: var(--ts-surface-2);
   border-color: var(--ts-line) !important;
   color: var(--ts-text);
+  max-width: 100%;
+  overflow: hidden;
 }
 .note-editor .note-editing-area .note-editable {
   background: var(--ts-surface) !important;
   color: var(--ts-text) !important;
+  overflow-x: auto !important;
+  word-break: break-word;
+}
+.note-toolbar {
+  background: var(--ts-surface-2) !important;
+  border-bottom-color: var(--ts-line) !important;
+}
+.note-btn {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: var(--ts-line) !important;
+  color: var(--ts-text) !important;
+  border-radius: 8px !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
