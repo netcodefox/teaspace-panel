@@ -134,7 +134,7 @@ if (isset($_POST['saveBranding'])) {
                 'legal' => $legal,
             ],
             'header' => [
-                'show_brand_text' => isset($_POST['show_brand_text']),
+                'show_brand_text' => !$helper->hasLogoImage() && !empty($_POST['show_brand_text']) && $_POST['show_brand_text'] !== '0',
                 'tagline' => trim($_POST['header_tagline'] ?? ''),
             ],
             'nav' => $navItems,
