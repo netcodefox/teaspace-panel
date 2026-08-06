@@ -58,18 +58,12 @@
 	
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
-    <script src="https://kit.fontawesome.com/76813cb3b7.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/34a9171ac2.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" integrity="sha256-321PxS+POvbvWcIVoRZeRmf32q7fTFQJ21bXwTNWREY=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" integrity="sha256-f6fW47QDm1m01HIep+UjpCpNwLVkBYKd+fhpb4VQ+gE=" crossorigin="anonymous" />
 
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<script>
-        (function(w,d,s,r,n){w.TrustpilotObject=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments)};
-            a=d.createElement(s);a.async=1;a.src=r;a.type='text/java'+s;f=d.getElementsByTagName(s)[0];
-            f.parentNode.insertBefore(a,f)})(window,document,'script', 'https://invitejs.trustpilot.com/tp.min.js', 'tp');
-            tp('register', 'vIolx7ChbabGP7Lk');
-</script>
-<script src="//code.tidio.co/dcyueiwn6uhhhpoeeccsgldjxgxp1zbn.js" async></script>
+
 
 <script type="text/javascript" src="https://cookiegenerator.eu/cookie.js?accept_text=Akzeptieren&amp;position=bottom&amp;skin=cookielaw5&amp;box_radius=49&amp;animation=shake2&amp;delay=32&amp;msg=Wir%20nutzen%20Cookies%2C%20um%20unsere%20Dienste%20zu%20erbringen%20und%20zu%20verbessern.%20Mit%20Nutzung%20dieser%20Seite%20akzeptieren%20Sie%20Cookies.&amp;accept_radius=17"></script>
 </head>

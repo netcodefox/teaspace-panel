@@ -101,11 +101,6 @@ include 'app/controller/PageController.php';
     </section>
     <!--Facts End-->
 	<!--Testimonials-->
-   <!-- ProvenExpert Bewertungssiegel -->
-<style type="text/css">@media(max-width:767px){#ProvenExpert_widgetbar_container {display:none !important;}}@media(min-width:768px){html {padding-bottom: 44px; box-sizing: border-box;}}</style>
-<div id="ProvenExpert_widgetbar_container"></div>
-<script type="text/javascript" src="//www.provenexpert.com/widget/bar_wino-spaceit.js?style=black&amp;feedback=1" async></script>
-<!-- ProvenExpert Bewertungssiegel -->
 <!-- Blog Posts -->
     <section class="section-spacing bg-gray">
         <div class="container">
