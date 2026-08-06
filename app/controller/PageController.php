@@ -1,23 +1,25 @@
 <?php
 
-if($user->sessionExists($_COOKIE['session_token'])){
+$sessionToken = $_COOKIE['session_token'] ?? null;
+
+if (!empty($sessionToken) && $user->sessionExists($sessionToken)) {
     /*
      * set static values
      */
 
-    $username = $user->getDataBySession($_COOKIE['session_token'],'username');
-    $rang = $user->getDataBySession($_COOKIE['session_token'],'role');
-    $mail = $user->getDataBySession($_COOKIE['session_token'],'email');
-    $amount = $user->getDataBySession($_COOKIE['session_token'],'amount');
-    $street = $user->getDataBySession($_COOKIE['session_token'],'street');
-    $city = $user->getDataBySession($_COOKIE['session_token'],'city');
-    $postcode = $user->getDataBySession($_COOKIE['session_token'],'postcode');
-    $userid = $user->getDataBySession($_COOKIE['session_token'],'id');
-    $affiliate_id = $user->getDataBySession($_COOKIE['session_token'],'affiliate_id');
-	$suppin = $user->getDataBySession($_COOKIE['session_token'],'support_pin');
+    $username = $user->getDataBySession($sessionToken,'username');
+    $rang = $user->getDataBySession($sessionToken,'role');
+    $mail = $user->getDataBySession($sessionToken,'email');
+    $amount = $user->getDataBySession($sessionToken,'amount');
+    $street = $user->getDataBySession($sessionToken,'street');
+    $city = $user->getDataBySession($sessionToken,'city');
+    $postcode = $user->getDataBySession($sessionToken,'postcode');
+    $userid = $user->getDataBySession($sessionToken,'id');
+    $affiliate_id = $user->getDataBySession($sessionToken,'affiliate_id');
+	$suppin = $user->getDataBySession($sessionToken,'support_pin');
 	
 
-    $user_addr = $user->getDataBySession($_COOKIE['session_token'],'user_addr');
+    $user_addr = $user->getDataBySession($sessionToken,'user_addr');
     if(is_null($user_addr)){
         $SQL = $db->prepare("UPDATE `users` SET `user_addr` = :user_addr WHERE `id` = :id");
         $SQL->execute(array(":user_addr" => $user->getIP(), ":id" => $userid));
@@ -29,12 +31,12 @@ if($user->sessionExists($_COOKIE['session_token'])){
 
             } else {
                 $_SESSION['info_msg'] = 'Something went wrong';
-                setcookie('session_token', null, time(), '/'); header('Location: '.$helper->url().'login');
+                setcookie('session_token', '', time() - 3600, '/'); header('Location: '.$helper->url().'login');
                 die();
             }
         } else {
             $_SESSION['info_msg'] = 'Something went wrong';
-            setcookie('session_token', null, time(), '/'); header('Location: '.$helper->url().'login');
+            setcookie('session_token', '', time() - 3600, '/'); header('Location: '.$helper->url().'login');
             die();
         }
     }
@@ -46,7 +48,7 @@ if (strpos($currPage,'back_') !== false || strpos($currPage,'team_') !== false) 
     /*
      * check if user is logged in
      */
-    if(!($user->loggedIn($_COOKIE['session_token']))){
+    if(!($user->loggedIn($sessionToken))){
         die(header('Location: '.$helper->url().'login'));
     }
 
@@ -54,7 +56,7 @@ if (strpos($currPage,'back_') !== false || strpos($currPage,'team_') !== false) 
      * check if user is on team page and is in team
      */
     if(strpos($currPage,'team_') !== false) {
-        if(!$user->isInTeam($_COOKIE['session_token'])){
+        if(!$user->isInTeam($sessionToken)){
             die(header('Location: '.$url.'dashboard'));
         }
     }
@@ -63,14 +65,14 @@ if (strpos($currPage,'back_') !== false || strpos($currPage,'team_') !== false) 
      * check if user is on admin page and is admin
      */
     if(strpos($currPage,'_admin') !== false) {
-        if(!$user->isAdmin($_COOKIE['session_token'])){
+        if(!$user->isAdmin($sessionToken)){
             die(header('Location: '.$url.'team/tickets'));
         }
     }
 
 }
 
-$currPageName = explode('_',$currPage)[1];
+$currPageName = explode('_',$currPage)[1] ?? $currPage;
 
 if(strpos($currPage,'system_') !== false) {
 
