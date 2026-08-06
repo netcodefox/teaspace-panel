@@ -82,13 +82,8 @@ class Site extends Controller
 
     public function isTS3PortAviable($node_id, $port)
     {
-        $SQL = self::db()->prepare("SELECT * FROM `teamspeaks` WHERE `node_id` = :node_id AND `teamspeak_port` = :port AND `deleted_at` IS NULL");
-        $SQL->execute(array(":node_id" => $node_id, ":port" => $port));
-        if ($SQL->rowCount() == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        // Legacy Teamspeak-Produkt entfernt – gleiche Port-Prüfung wie TeaSpeak
+        return $this->isTeaPortAviable($node_id, $port);
     }
 
     public function isTeaPortAviable($node_id, $port)
@@ -115,7 +110,9 @@ class Site extends Controller
         $SQL = self::db()->prepare('SELECT * FROM `product_prices` WHERE `name` = :name');
         $SQL->execute(array(":name" => $product_id));
         $response = $SQL->fetch(PDO::FETCH_ASSOC);
-
+        if (!$response || !isset($response['price'])) {
+            return 0;
+        }
         return $response['price'];
     }
 
@@ -129,12 +126,26 @@ class Site extends Controller
 
     public function getProduct($id, $data)
     {
+        if (!$this->tableExists('store_product_entries')) {
+            return false;
+        }
         $SQL = self::db()->prepare('SELECT * FROM `store_product_entries` WHERE `id` = :id');
         $SQL->execute(array(":id" => $id));
         $response = $SQL->fetch(PDO::FETCH_ASSOC);
         if($SQL->rowCount() == 1){
             return $response[$data];
         } else {
+            return false;
+        }
+    }
+
+    private function tableExists(string $table): bool
+    {
+        try {
+            $stmt = self::db()->prepare('SHOW TABLES LIKE :t');
+            $stmt->execute([':t' => $table]);
+            return $stmt->rowCount() > 0;
+        } catch (Throwable $e) {
             return false;
         }
     }

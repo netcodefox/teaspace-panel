@@ -64,6 +64,97 @@ class Helper extends Controller
         return $response[$data];
     }
 
+    public function tableExists(string $table): bool
+    {
+        try {
+            $db = self::db();
+            $stmt = $db->prepare('SHOW TABLES LIKE :t');
+            $stmt->execute([':t' => $table]);
+            return $stmt->rowCount() > 0;
+        } catch (Throwable $e) {
+            return false;
+        }
+    }
+
+    public function ensureCoreSchema(): void
+    {
+        static $coreReady = false;
+        if ($coreReady) {
+            return;
+        }
+        $coreReady = true;
+
+        try {
+            $db = self::db();
+
+            if (!$this->tableExists('product_prices')) {
+                $db->exec("CREATE TABLE `product_prices` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `name` varchar(255) NOT NULL,
+                  `price` decimal(12,2) NOT NULL,
+                  `created_at` datetime DEFAULT current_timestamp(),
+                  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY `name` (`name`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            }
+            $priceCheck = $db->prepare("SELECT id FROM `product_prices` WHERE `name` = 'TEASPEAK' LIMIT 1");
+            $priceCheck->execute();
+            if ($priceCheck->rowCount() === 0) {
+                $db->prepare("INSERT INTO `product_prices` (`name`, `price`) VALUES ('TEASPEAK', 0.12)")->execute();
+            }
+
+            if (!$this->tableExists('teaspeak_hosts')) {
+                $db->exec("CREATE TABLE `teaspeak_hosts` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `name` varchar(255) NOT NULL,
+                  `login_ip` varchar(255) NOT NULL,
+                  `display_ip` varchar(255) DEFAULT NULL,
+                  `login_port` varchar(255) NOT NULL,
+                  `login_name` varchar(255) NOT NULL,
+                  `login_passwort` varchar(255) NOT NULL,
+                  `status` enum('ACTIVE','DISABLED') NOT NULL DEFAULT 'ACTIVE',
+                  `notes` text DEFAULT NULL,
+                  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            }
+
+            if (!$this->tableExists('teaspeaks')) {
+                $db->exec("CREATE TABLE `teaspeaks` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `user_id` int(11) NOT NULL,
+                  `slots` int(11) NOT NULL,
+                  `node_id` int(11) NOT NULL,
+                  `teaspeak_ip` varchar(255) NOT NULL,
+                  `teaspeak_port` varchar(255) NOT NULL,
+                  `sid` int(11) NOT NULL,
+                  `expire_at` datetime NOT NULL,
+                  `price` decimal(12,2) NOT NULL,
+                  `state` enum('ACTIVE','SUSPENDED','DELETED') NOT NULL DEFAULT 'ACTIVE',
+                  `days` varchar(255) DEFAULT NULL,
+                  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+                  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                  `deleted_at` datetime DEFAULT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            }
+
+            if (!$this->tableExists('settings')) {
+                $db->exec("CREATE TABLE `settings` (
+                  `id` int(11) NOT NULL,
+                  `login` int(11) NOT NULL DEFAULT 1,
+                  `register` int(11) NOT NULL DEFAULT 1,
+                  `wartung` int(11) NOT NULL DEFAULT 0,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+                $db->exec("INSERT INTO `settings` (`id`, `login`, `register`, `wartung`) VALUES (1, 1, 1, 0)");
+            }
+        } catch (Throwable $e) {
+            // best-effort
+        }
+    }
+
     public function ensureSettingsSchema(): void
     {
         static $ready = false;
@@ -73,7 +164,11 @@ class Helper extends Controller
         $ready = true;
 
         try {
+            $this->ensureCoreSchema();
             $db = self::db();
+            if (!$this->tableExists('settings')) {
+                return;
+            }
             $cols = $db->query("SHOW COLUMNS FROM `settings`")->fetchAll(PDO::FETCH_COLUMN);
             $alters = [];
             if (!in_array('logo_path', $cols, true)) {
@@ -109,19 +204,21 @@ class Helper extends Controller
                 $db->exec('ALTER TABLE `settings` ' . implode(', ', $alters));
             }
 
-            $hostCols = $db->query("SHOW COLUMNS FROM `teaspeak_hosts`")->fetchAll(PDO::FETCH_COLUMN);
-            $hostAlters = [];
-            if (!in_array('display_ip', $hostCols, true)) {
-                $hostAlters[] = "ADD COLUMN `display_ip` varchar(255) DEFAULT NULL";
-            }
-            if (!in_array('notes', $hostCols, true)) {
-                $hostAlters[] = "ADD COLUMN `notes` text DEFAULT NULL";
-            }
-            if (!in_array('created_at', $hostCols, true)) {
-                $hostAlters[] = "ADD COLUMN `created_at` datetime NOT NULL DEFAULT current_timestamp()";
-            }
-            if ($hostAlters) {
-                $db->exec('ALTER TABLE `teaspeak_hosts` ' . implode(', ', $hostAlters));
+            if ($this->tableExists('teaspeak_hosts')) {
+                $hostCols = $db->query("SHOW COLUMNS FROM `teaspeak_hosts`")->fetchAll(PDO::FETCH_COLUMN);
+                $hostAlters = [];
+                if (!in_array('display_ip', $hostCols, true)) {
+                    $hostAlters[] = "ADD COLUMN `display_ip` varchar(255) DEFAULT NULL";
+                }
+                if (!in_array('notes', $hostCols, true)) {
+                    $hostAlters[] = "ADD COLUMN `notes` text DEFAULT NULL";
+                }
+                if (!in_array('created_at', $hostCols, true)) {
+                    $hostAlters[] = "ADD COLUMN `created_at` datetime NOT NULL DEFAULT current_timestamp()";
+                }
+                if ($hostAlters) {
+                    $db->exec('ALTER TABLE `teaspeak_hosts` ' . implode(', ', $hostAlters));
+                }
             }
         } catch (Throwable $e) {
             // Schema sync best-effort; pages still work with base columns

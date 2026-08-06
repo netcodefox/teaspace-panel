@@ -64,26 +64,33 @@ if(isset($_POST['order'])){
     }
 
     if (empty($error)) {
+        try {
+            $sid_converter = json_encode($tea->createServer($node_id, $_POST['slots'], $port));
+            $get_sid = json_decode($sid_converter);
+            $sid = $get_sid->sid ?? null;
+            if (!$sid) {
+                throw new RuntimeException('TeaSpeak-Server konnte nicht erstellt werden.');
+            }
 
-        $sid_converter = json_encode($tea->createServer($node_id, $_POST['slots'], $port));
-        $get_sid = json_decode($sid_converter);
-        $sid = $get_sid->sid;
+            $date = new DateTime('now', new DateTimeZone('Europe/Berlin'));
+            $date->modify('+' . $_POST['duration'] . ' day');
+            $new_date = $date->format('Y-m-d H:i:s');
 
-        $date = new DateTime('now', new DateTimeZone('Europe/Berlin'));
-        $date->modify('+' . $_POST['duration'] . ' day');
-        $new_date = $date->format('Y-m-d H:i:s');
+            $publicIp = !empty($nodeInfos['display_ip']) ? $nodeInfos['display_ip'] : $nodeInfos['login_ip'];
 
-        $publicIp = !empty($nodeInfos['display_ip']) ? $nodeInfos['display_ip'] : $nodeInfos['login_ip'];
+            $SQLInsertBot = $db->prepare("INSERT INTO `teaspeaks`(`slots`, `user_id`, `node_id`, `teaspeak_ip`, `teaspeak_port`, `sid`, `expire_at`, `price`, `state`) VALUES (:slots,:user_id,:node_id,:teaspeak_ip,:teaspeak_port,:sid,:expire_at,:price,'ACTIVE')");
+            $SQLInsertBot->execute(array(":slots" => $_POST['slots'], ":user_id" => $userid, ":node_id" => $node_id, ":teaspeak_ip" => $publicIp, ":teaspeak_port" => $port, ":sid" => $sid, ":expire_at" => $new_date, ":price" => $db_price));
 
-        $SQLInsertBot = $db->prepare("INSERT INTO `teaspeaks`(`slots`, `user_id`, `node_id`, `teaspeak_ip`, `teaspeak_port`, `sid`, `expire_at`, `price`) VALUES (:slots,:user_id,:node_id,:teaspeak_ip,:teaspeak_port,:sid,:expire_at,:price)");
-        $SQLInsertBot->execute(array(":slots" => $_POST['slots'], ":user_id" => $userid, ":node_id" => $node_id, ":teaspeak_ip" => $publicIp, ":teaspeak_port" => $port, ":sid" => $sid, ":expire_at" => $new_date, ":price" => $db_price));
+            $user->removeMoney($price, $userid);
+            $user->addTransaction($userid,'-'.$price,'Teaspeak Server Bestellung');
 
-        $user->removeMoney($price, $userid);
-        $user->addTransaction($userid,'-'.$price,'Teaspeak Server Bestellung');
+            $_SESSION['success_msg'] = 'Vielen Dank! Dein Teaspeak Server wird nun eingerichtet';
 
-        $_SESSION['success_msg'] = 'Vielen Dank! Dein Teaspeak Server wird nun eingerichtet';
-
-        header('Location: '.$helper->url().'dashboard');
+            header('Location: '.$helper->url().'dashboard');
+            exit;
+        } catch (Throwable $e) {
+            echo sendError('Bestellung fehlgeschlagen: ' . $e->getMessage());
+        }
     } else {
         echo sendError($error);
     }

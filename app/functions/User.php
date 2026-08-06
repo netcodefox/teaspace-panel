@@ -163,7 +163,7 @@ class User extends Controller
         $count = 0;
 
        
-        $SQL = self::db()->prepare('SELECT * FROM `teaspeaks` WHERE `user_id` = :user_id AND `deleted_at` IS NULL AND `state` = "active"');
+        $SQL = self::db()->prepare('SELECT * FROM `teaspeaks` WHERE `user_id` = :user_id AND `deleted_at` IS NULL AND UPPER(`state`) = "ACTIVE"');
         $SQL->execute(array(":user_id" => $user_id));
         $count = $count + $SQL->rowCount();
 
@@ -181,7 +181,7 @@ class User extends Controller
 
        
 
-        $SQL = self::db()->prepare('SELECT * FROM `teaspeaks` WHERE  `state` = "active"');
+        $SQL = self::db()->prepare('SELECT * FROM `teaspeaks` WHERE UPPER(`state`) = "ACTIVE"');
         $SQL->execute();
         $count = $count + $SQL->rowCount();
 
@@ -197,7 +197,7 @@ class User extends Controller
 
        
 
-        $SQL = self::db()->prepare("SELECT * FROM `teaspeaks` WHERE `user_id` = :user_id AND `deleted_at` IS NULL AND `state` = 'active'");
+        $SQL = self::db()->prepare("SELECT * FROM `teaspeaks` WHERE `user_id` = :user_id AND `deleted_at` IS NULL AND UPPER(`state`) = 'ACTIVE'");
         $SQL->execute(array(":user_id" => $user_id));
         if ($SQL->rowCount() != 0) {
             while ($row = $SQL->fetch(PDO::FETCH_ASSOC)) {

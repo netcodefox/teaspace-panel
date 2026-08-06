@@ -86,59 +86,15 @@ $google_response = $site->validateCaptcha($_POST['g-recaptcha-response']);
 							<div class="col-md-12">
                                 <label>Produkt:</label>
                                 <select name="produkt" class="form-control"  >
+                                    <option value="">Kein Produkt / Allgemein</option>
 								 <?php
-                                $SQL = $db -> prepare("SELECT * FROM `webspace` WHERE `user_id` = :user_id AND `state` = 'active'");
+                                $SQL = $db -> prepare("SELECT * FROM `teaspeaks` WHERE `user_id` = :user_id AND `deleted_at` IS NULL AND UPPER(`state`) = 'ACTIVE'");
                                 $SQL->execute(array(":user_id" => $userid));
                                 if ($SQL->rowCount() != 0) {
                                 while ($row = $SQL -> fetch(PDO::FETCH_ASSOC)){
                                 ?>
-							
-							
-								<option value="Webspace #<?= $row['id']; ?>">Webspace #<?= $row['id']; ?></option>
-								
-								
-							
-							<?php } } ?>
-                                     <?php
-                                $SQL = $db -> prepare("SELECT * FROM `teaspeaks` WHERE `user_id` = :user_id AND `state` = 'active'");
-                                $SQL->execute(array(":user_id" => $userid));
-                                if ($SQL->rowCount() != 0) {
-                                while ($row = $SQL -> fetch(PDO::FETCH_ASSOC)){
-                                ?>
-							
-							
 								<option value="Teaspeak #<?= $row['id']; ?>">Teaspeak #<?= $row['id']; ?></option>
-								
-								
-							
-							<?php } } ?> 
-							<?php
-                                $SQL = $db -> prepare("SELECT * FROM `teamspeaks` WHERE `user_id` = :user_id AND `state` = 'active'");
-                                $SQL->execute(array(":user_id" => $userid));
-                                if ($SQL->rowCount() != 0) {
-                                while ($row = $SQL -> fetch(PDO::FETCH_ASSOC)){
-                                ?>
-							
-							
-								<option value="Teamspeak #<?= $row['id']; ?>">Teamspeak #<?= $row['id']; ?></option>
-								
-								
-							
 							<?php } } ?>
-                             <?php
-                                $SQL = $db -> prepare("SELECT * FROM `store_products` WHERE `user_id` = :user_id AND `state` = 'active'");
-                                $SQL->execute(array(":user_id" => $userid));
-                                if ($SQL->rowCount() != 0) {
-                                while ($row = $SQL -> fetch(PDO::FETCH_ASSOC)){
-                                ?>
-							
-							
-								<option value="Sevice #<?= $row['id']; ?>">Sevice #<?= $row['id']; ?></option>
-								
-								
-							
-							<?php } } ?>
-                                    
                                 </select>
                             </div>
                             <div class="col-md-12">
