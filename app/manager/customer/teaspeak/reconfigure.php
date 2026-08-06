@@ -54,10 +54,10 @@ if(isset($_POST['reconfigure'])){
         $SQL -> execute(array(":id" => $serverInfos['node_id']));
         $nodeInfos = $SQL->fetch(PDO::FETCH_ASSOC);
         $uri = "serverquery://".$nodeInfos['login_name'].":".$nodeInfos['login_passwort']."@".$nodeInfos['login_ip'].":".$nodeInfos['login_port']."/?server_port=".$serverInfos['teaspeak_port'];
-        $tea_query = TeamSpeak3::factory($uri);
+        $tea_query = \PlanetTeamSpeak\TeamSpeak3Framework\TeamSpeak3::factory($uri);
 
         $serverStatus = 'ONLINE';
-    }catch(TeamSpeak3_Exception $e){
+    }catch(\PlanetTeamSpeak\TeamSpeak3Framework\Exception\TeamSpeak3Exception $e){
         $serverStatus = 'OFFLINE';
     }
 

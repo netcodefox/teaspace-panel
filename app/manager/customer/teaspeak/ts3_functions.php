@@ -1,5 +1,10 @@
 <?php
 
+use PlanetTeamSpeak\TeamSpeak3Framework\Exception\TeamSpeak3Exception;
+use PlanetTeamSpeak\TeamSpeak3Framework\Helper\Convert;
+use PlanetTeamSpeak\TeamSpeak3Framework\TeamSpeak3;
+use PlanetTeamSpeak\TeamSpeak3Framework\Viewer\Html;
+
 try{
     $SQL = $db->prepare("SELECT * FROM `teaspeak_hosts` WHERE `id` = :id");
     $SQL -> execute(array(":id" => $serverInfos['node_id']));
@@ -13,15 +18,15 @@ try{
 				$serverStatus = 'OFFLINE';
 			}
     #$serverStatus = 'ONLINE';
-}catch(TeamSpeak3_Exception $e){
+}catch(TeamSpeak3Exception $e){
     $serverStatus = 'OFFLINE';
 }
 
 function getViewer($ts3_query, $picUrl, $serverStatus){
     if($serverStatus == 'ONLINE') {
         try{
-            return $ts3_query->getViewer(new TeamSpeak3_Viewer_Html($picUrl . "viewer/", $picUrl . "flags/", "data:image"));
-        }catch(TeamSpeak3_Exception $e){
+            return $ts3_query->getViewer(new Html($picUrl . "viewer/", $picUrl . "flags/", "data:image"));
+        }catch(TeamSpeak3Exception $e){
             return 'Es konnten nicht alle Server-Icons geladen werden.';
         }
     } else {
@@ -33,7 +38,7 @@ function listTokens($ts3_query, $serverStatus){
     if($serverStatus == 'ONLINE') {
         try {
             return $ts3_query->privilegeKeyList();
-        } catch (\TeamSpeak3_Exception $e) {
+        } catch (TeamSpeak3Exception $e) {
             return [];
         }
     }
@@ -75,7 +80,7 @@ function getClientsOnline($ts3_query, $serverStatus){
 }
 
 function getOnlineTime($ts3_query){
-    return TeamSpeak3_Helper_Convert::seconds($ts3_query->virtualserver_uptime, false, "%d Tage %02d:%02d:%02d");
+    return Convert::seconds($ts3_query->virtualserver_uptime, false, "%d Tage %02d:%02d:%02d");
 }
 
 function getInfos($ts3_query){

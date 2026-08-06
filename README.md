@@ -2,7 +2,7 @@
 
 Kundenpanel für TeaSpeak-/Hosting-Produkte mit Login, Zahlungen, Tickets und Team-Bereich.
 
-**Voraussetzung: PHP 8.0+** (getestet mit PHP 8.3)
+**Voraussetzung: PHP 8.1+** (getestet mit PHP 8.3)
 
 ## Features
 
@@ -12,7 +12,7 @@ Kundenpanel für TeaSpeak-/Hosting-Produkte mit Login, Zahlungen, Tickets und Te
 - E-Mail-Blacklist
 - Spenden- & Affiliate-System
 - Benutzerverwaltung (Team/Admin)
-- TeaSpeak-Server-Verwaltung
+- TeaSpeak-Server-Verwaltung (GreenTeaSpeak TS3 PHP Framework 1.3.1)
 
 ## Screenshots
 
@@ -21,8 +21,8 @@ Kundenpanel für TeaSpeak-/Hosting-Produkte mit Login, Zahlungen, Tickets und Te
 
 ## Voraussetzungen
 
-- PHP **8.0 oder neuer**
-- Extensions: `pdo`, `pdo_mysql`, `curl`, `mbstring`, `json`, `openssl`
+- PHP **8.1 oder neuer**
+- Extensions: `pdo`, `pdo_mysql`, `curl`, `mbstring`, `json`, `openssl`, `ctype`
 - MySQL / MariaDB
 - Apache mit `mod_rewrite` (oder vergleichbare Rewrite-Regeln)
 - Composer-Abhängigkeiten (`vendor/` – im Repo enthalten oder via `composer install`)
@@ -72,7 +72,7 @@ Beim ersten Aufruf von `index.php` ohne Lock wird automatisch zum Installer weit
 
 ## PHP 8 – Hinweise zu diesem Release
 
-- Statische Aufrufe nicht-statischer Methoden entfernt
+- TeaSpeak-Integration über [GreenTeaSpeak/ts3phpframework 1.3.1](https://github.com/GreenTeaSpeak/ts3phpframework/releases/tag/1.3.1) (GreenTeaSpeak-Protokoll-Support)
 - `DateTime(null, …)` durch `DateTime('now', …)` ersetzt
 - Optionale Parameter vor Pflichtparametern in den TS-Admin-Klassen korrigiert
 - Undefined-Index-Zugriffe und fehlende Resource-Dateien abgefangen

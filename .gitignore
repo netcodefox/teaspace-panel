@@ -1,4 +1,5 @@
 /install/install.lock
+/composer.phar
 /.env
 Thumbs.db
 .DS_Store

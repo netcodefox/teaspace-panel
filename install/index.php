@@ -42,8 +42,8 @@ function install_requirements(): array
 {
     $checks = [];
     $checks[] = [
-        'label' => 'PHP 8.0 oder neuer',
-        'ok' => version_compare(PHP_VERSION, '8.0.0', '>='),
+        'label' => 'PHP 8.1 oder neuer',
+        'ok' => version_compare(PHP_VERSION, '8.1.0', '>='),
         'info' => 'Aktuell: ' . PHP_VERSION,
     ];
 

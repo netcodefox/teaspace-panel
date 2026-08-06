@@ -1,5 +1,8 @@
 <?php
 
+use PlanetTeamSpeak\TeamSpeak3Framework\Exception\TeamSpeak3Exception;
+use PlanetTeamSpeak\TeamSpeak3Framework\TeamSpeak3;
+
 $tea = new Tea();
 
 class Tea extends Controller
@@ -20,7 +23,7 @@ class Tea extends Controller
 
             $ts3_VirtualServer->serverDeselect();
 
-        } catch (TeamSpeak3_Exception $e) {
+        } catch (TeamSpeak3Exception $e) {
             return 'OFFLINE';
         }
 
