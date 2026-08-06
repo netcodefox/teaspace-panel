@@ -101,8 +101,8 @@ $product_count = 0;
               <span class="info-box-icon bg-warning elevation-1"><i class="fab fa-teamspeak"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">Teamspeak Support</span>
-                <span class="info-box-number"><a  href="ts3server://ts.wino-space.de">ts.wino-space.de</a></span>
+                <span class="info-box-text"><?= htmlspecialchars($helper->getSupportTsLabel()); ?></span>
+                <span class="info-box-number"><a href="ts3server://<?= htmlspecialchars($helper->getSupportTsValue()); ?>"><?= htmlspecialchars($helper->getSupportTsValue()); ?></a></span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -113,8 +113,8 @@ $product_count = 0;
               <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-phone"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">Telefon & Whatsapp Support</span>
-                <span class="info-box-number">+49 (0) 2452 860729</span>
+                <span class="info-box-text"><?= htmlspecialchars($helper->getSupportPhoneLabel()); ?></span>
+                <span class="info-box-number"><?= htmlspecialchars($helper->getSupportPhoneValue()); ?></span>
               </div>
               <!-- /.info-box-content -->
             </div>

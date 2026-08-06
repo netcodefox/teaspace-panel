@@ -214,7 +214,11 @@ CREATE TABLE `settings` (
   `wartung` int(11) NOT NULL DEFAULT 0,
   `logo_path` varchar(255) DEFAULT NULL,
   `favicon_path` varchar(255) DEFAULT NULL,
-  `display_name` varchar(255) DEFAULT NULL
+  `display_name` varchar(255) DEFAULT NULL,
+  `support_ts_label` varchar(255) DEFAULT NULL,
+  `support_ts_value` varchar(255) DEFAULT NULL,
+  `support_phone_label` varchar(255) DEFAULT NULL,
+  `support_phone_value` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

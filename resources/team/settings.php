@@ -43,6 +43,10 @@ if (isset($_POST['saveBranding'])) {
             'login' => (int) ($_POST['login'] ?? 1),
             'register' => (int) ($_POST['register'] ?? 1),
             'wartung' => (int) ($_POST['wartung'] ?? 0),
+            'support_ts_label' => trim($_POST['support_ts_label'] ?? '') ?: null,
+            'support_ts_value' => trim($_POST['support_ts_value'] ?? '') ?: null,
+            'support_phone_label' => trim($_POST['support_phone_label'] ?? '') ?: null,
+            'support_phone_value' => trim($_POST['support_phone_value'] ?? '') ?: null,
         ];
 
         if (!empty($_FILES['logo']['name'])) {
@@ -81,7 +85,7 @@ $faviconUrl = $helper->getFaviconUrl();
     <div class="content-header">
         <div class="container-fluid">
             <h1 class="ts-page-title">Einstellungen &amp; Branding</h1>
-            <p class="ts-page-sub">Logo, Favicon, Seitenname und System-Schalter</p>
+            <p class="ts-page-sub">Logo, Support-Kontakte, Seitenname und System-Schalter</p>
         </div>
     </div>
 
@@ -113,6 +117,33 @@ $faviconUrl = $helper->getFaviconUrl();
                                         <input type="checkbox" class="custom-control-input" id="reset_favicon" name="reset_favicon" value="1">
                                         <label class="custom-control-label" for="reset_favicon">Standard-Favicon wiederherstellen</label>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card ts-panel mb-3">
+                        <div class="card-header">Support-Karten (Dashboard)</div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="support_ts_label">Teamspeak – Titel</label>
+                                    <input id="support_ts_label" class="form-control" name="support_ts_label" value="<?= htmlspecialchars($helper->getSupportTsLabel()); ?>">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="support_ts_value">Teamspeak – Adresse</label>
+                                    <input id="support_ts_value" class="form-control" name="support_ts_value" value="<?= htmlspecialchars($helper->getSupportTsValue()); ?>" placeholder="ts.example.de">
+                                    <small class="form-text text-muted">Wird als Anzeige und als <code>ts3server://…</code>-Link genutzt.</small>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="support_phone_label">Telefon – Titel</label>
+                                    <input id="support_phone_label" class="form-control" name="support_phone_label" value="<?= htmlspecialchars($helper->getSupportPhoneLabel()); ?>">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="support_phone_value">Telefon / WhatsApp – Nummer</label>
+                                    <input id="support_phone_value" class="form-control" name="support_phone_value" value="<?= htmlspecialchars($helper->getSupportPhoneValue()); ?>" placeholder="+49 …">
                                 </div>
                             </div>
                         </div>

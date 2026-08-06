@@ -85,6 +85,18 @@ class Helper extends Controller
             if (!in_array('display_name', $cols, true)) {
                 $alters[] = "ADD COLUMN `display_name` varchar(255) DEFAULT NULL";
             }
+            if (!in_array('support_ts_label', $cols, true)) {
+                $alters[] = "ADD COLUMN `support_ts_label` varchar(255) DEFAULT NULL";
+            }
+            if (!in_array('support_ts_value', $cols, true)) {
+                $alters[] = "ADD COLUMN `support_ts_value` varchar(255) DEFAULT NULL";
+            }
+            if (!in_array('support_phone_label', $cols, true)) {
+                $alters[] = "ADD COLUMN `support_phone_label` varchar(255) DEFAULT NULL";
+            }
+            if (!in_array('support_phone_value', $cols, true)) {
+                $alters[] = "ADD COLUMN `support_phone_value` varchar(255) DEFAULT NULL";
+            }
             if ($alters) {
                 $db->exec('ALTER TABLE `settings` ' . implode(', ', $alters));
             }
@@ -133,6 +145,30 @@ class Helper extends Controller
             return $this->url() . ltrim(str_replace('\\', '/', $path), '/');
         }
         return $this->getLogoUrl();
+    }
+
+    public function getSupportTsLabel(): string
+    {
+        $v = $this->getSetting('support_ts_label');
+        return (is_string($v) && trim($v) !== '') ? trim($v) : 'Teamspeak Support';
+    }
+
+    public function getSupportTsValue(): string
+    {
+        $v = $this->getSetting('support_ts_value');
+        return (is_string($v) && trim($v) !== '') ? trim($v) : 'ts.wino-space.de';
+    }
+
+    public function getSupportPhoneLabel(): string
+    {
+        $v = $this->getSetting('support_phone_label');
+        return (is_string($v) && trim($v) !== '') ? trim($v) : 'Telefon & Whatsapp Support';
+    }
+
+    public function getSupportPhoneValue(): string
+    {
+        $v = $this->getSetting('support_phone_value');
+        return (is_string($v) && trim($v) !== '') ? trim($v) : '+49 (0) 2452 860729';
     }
 
     public function setSettings(array $fields): void
