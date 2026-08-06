@@ -3,7 +3,6 @@ $phoneSupport = $helper->getSupportPhoneValue();
 $sessionToken = $_COOKIE['session_token'] ?? null;
 $isLoggedIn = !empty($sessionToken) && $user->sessionExists($sessionToken);
 $isTeam = $isLoggedIn && $user->isInTeam($sessionToken);
-$showBrandText = $helper->showBrandText();
 $tagline = $helper->getHeaderTagline();
 ?>
 <section class="row top_header">
