@@ -37,6 +37,32 @@ body {
     color: #f2f2f4;
 }
 
+.content-wrapper,
+.content,
+.content-header,
+.page-title,
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6,
+.content-header h1,
+.text-dark,
+label.text-dark,
+.content p,
+.content strong,
+.content label,
+.content .list-group-item {
+    color: #f2f2f4 !important;
+}
+
+.text-muted,
+.form-text.text-muted,
+small.text-muted {
+    color: #a1a1aa !important;
+}
+
 a  {
     color: #14b8a6;
 }

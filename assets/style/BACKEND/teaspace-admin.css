@@ -39,6 +39,43 @@ body.sidebar-mini.layout-fixed {
 
 .content-wrapper {
   background: transparent !important;
+  color: var(--ts-text);
+}
+
+/* Bootstrap “dark” text is black – unreadable on charcoal */
+.content-wrapper .text-dark,
+.content .text-dark,
+label.text-dark,
+h1.text-dark,
+.content-header .text-dark,
+.content-header h1,
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6,
+.page-title,
+.page-title h1,
+.page-title h2,
+.page-title h3,
+.content .text,
+.content p,
+.content strong,
+.content label:not(.btn),
+.content .list-group-item,
+.breadcrumb-item,
+.breadcrumb-item.active,
+.navbar-nav .nav-link,
+.user-panel .info a {
+  color: var(--ts-text) !important;
+}
+
+.text-muted,
+.form-text.text-muted,
+small.text-muted,
+.content .text-muted {
+  color: var(--ts-muted) !important;
 }
 
 .ts-page-title {
