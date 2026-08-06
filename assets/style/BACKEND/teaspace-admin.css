@@ -1,20 +1,20 @@
-/* TeaSpace Admin – Soft UI Evolution + Teal */
+/* TeaSpace Admin – Soft UI Evolution + Teal (neutral charcoal, not navy) */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --ts-bg: #0b1220;
-  --ts-surface: #121c2e;
-  --ts-surface-2: #182338;
-  --ts-line: rgba(148, 163, 184, 0.16);
-  --ts-text: #e8eef7;
-  --ts-muted: #94a3b8;
+  --ts-bg: #121214;
+  --ts-surface: #1a1b1f;
+  --ts-surface-2: #222328;
+  --ts-line: rgba(255, 255, 255, 0.08);
+  --ts-text: #f2f2f4;
+  --ts-muted: #a1a1aa;
   --ts-accent: #14b8a6;
   --ts-accent-2: #0d9488;
   --ts-ok: #22c55e;
-  --ts-off: #64748b;
+  --ts-off: #71717a;
   --ts-danger: #ef4444;
   --ts-radius: 12px;
-  --ts-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  --ts-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   --ts-font: "Plus Jakarta Sans", system-ui, sans-serif;
   --ts-motion: 220ms ease;
 }
@@ -33,8 +33,8 @@ body .content-wrapper,
 }
 
 body.sidebar-mini.layout-fixed {
-  background: radial-gradient(900px 420px at 0% 0%, rgba(20, 184, 166, 0.12), transparent 55%),
-              linear-gradient(160deg, var(--ts-bg), #0f172a) !important;
+  background: radial-gradient(900px 420px at 0% 0%, rgba(20, 184, 166, 0.1), transparent 55%),
+              linear-gradient(160deg, var(--ts-bg), #18181b) !important;
 }
 
 .content-wrapper {
@@ -56,7 +56,7 @@ body.sidebar-mini.layout-fixed {
 }
 
 .main-sidebar {
-  background: rgba(12, 20, 34, 0.96) !important;
+  background: rgba(18, 18, 20, 0.98) !important;
   border-right: 1px solid var(--ts-line);
   box-shadow: none !important;
 }
@@ -115,19 +115,25 @@ body.sidebar-mini.layout-fixed {
 }
 
 .main-header {
-  background: rgba(11, 18, 32, 0.8) !important;
+  background: rgba(18, 18, 20, 0.85) !important;
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--ts-line) !important;
 }
 
 .card.ts-panel,
 .ts-panel.card,
-.content .card {
+.content .card,
+.content .card .card-body,
+.card-body {
   background: var(--ts-surface) !important;
+  color: var(--ts-text) !important;
+}
+
+.content .card,
+.card.ts-panel {
   border: 1px solid var(--ts-line) !important;
   border-radius: var(--ts-radius) !important;
   box-shadow: var(--ts-shadow) !important;
-  color: var(--ts-text);
 }
 
 .content .card .card-header {
@@ -188,8 +194,9 @@ body.sidebar-mini.layout-fixed {
 }
 
 .form-control,
-.select2-container--default .select2-selection--single {
-  background: rgba(2, 8, 20, 0.45) !important;
+.select2-container--default .select2-selection--single,
+.card textarea {
+  background: rgba(0, 0, 0, 0.28) !important;
   border: 1px solid var(--ts-line) !important;
   border-radius: 10px !important;
   color: var(--ts-text) !important;
@@ -203,10 +210,30 @@ body.sidebar-mini.layout-fixed {
 
 label { color: var(--ts-muted); font-weight: 600; font-size: 0.9rem; }
 
+/* Tables: kill navy bleed from style-dark / AdminLTE */
+.table,
+.card .table,
+.ts-table {
+  color: var(--ts-text) !important;
+  background: transparent !important;
+}
+
+.table thead th,
+.ts-table thead th,
+.table td,
+.ts-table td,
+.table th,
+.card .table td,
+.card .table th {
+  background: transparent !important;
+  border-color: var(--ts-line) !important;
+  color: var(--ts-text) !important;
+}
+
 .ts-table thead th {
   border-top: 0;
   border-bottom: 1px solid var(--ts-line);
-  color: var(--ts-muted);
+  color: var(--ts-muted) !important;
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -215,7 +242,38 @@ label { color: var(--ts-muted); font-weight: 600; font-size: 0.9rem; }
 .ts-table td {
   border-top: 1px solid var(--ts-line);
   vertical-align: middle;
-  color: var(--ts-text);
+}
+
+.table-hover tbody tr:hover,
+.ts-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--ts-text) !important;
+}
+
+code,
+.table code,
+.ts-table code {
+  color: var(--ts-accent) !important;
+  background: rgba(20, 184, 166, 0.12) !important;
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+a,
+.content a:not(.btn):not(.nav-link):not(.dropdown-item) {
+  color: var(--ts-accent) !important;
+}
+
+a:hover,
+.content a:not(.btn):not(.nav-link):not(.dropdown-item):hover {
+  color: #2dd4bf !important;
+}
+
+.card .list-group-item {
+  background: var(--ts-surface) !important;
+  color: var(--ts-text) !important;
+  border-color: var(--ts-line) !important;
 }
 
 .ts-badge {
@@ -228,7 +286,7 @@ label { color: var(--ts-muted); font-weight: 600; font-size: 0.9rem; }
 }
 
 .ts-badge-ok { background: rgba(34, 197, 94, 0.15); color: #86efac; }
-.ts-badge-off { background: rgba(100, 116, 139, 0.2); color: #cbd5e1; }
+.ts-badge-off { background: rgba(113, 113, 122, 0.25); color: #d4d4d8; }
 
 .modal-content.ts-panel,
 .modal-content {
@@ -252,7 +310,7 @@ label { color: var(--ts-muted); font-weight: 600; font-size: 0.9rem; }
   border: 1px dashed var(--ts-line);
   border-radius: var(--ts-radius);
   margin-bottom: 1rem;
-  background: rgba(2, 8, 20, 0.35);
+  background: rgba(0, 0, 0, 0.25);
 }
 
 .ts-preview-logo {
@@ -277,6 +335,29 @@ label { color: var(--ts-muted); font-weight: 600; font-size: 0.9rem; }
   background: transparent !important;
   border-top: 1px solid var(--ts-line) !important;
   color: var(--ts-muted) !important;
+}
+
+.dropdown-menu {
+  background: var(--ts-surface-2) !important;
+  border: 1px solid var(--ts-line) !important;
+}
+
+.dropdown-item {
+  color: var(--ts-text) !important;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: rgba(20, 184, 166, 0.12) !important;
+  color: var(--ts-text) !important;
+}
+
+ul.home-timeline:before {
+  background: var(--ts-accent) !important;
+}
+
+ul.home-timeline > li:before {
+  border-color: var(--ts-accent) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

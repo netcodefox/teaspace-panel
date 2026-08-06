@@ -1,66 +1,57 @@
+/* Legacy dark mode – neutral charcoal (no navy). Prefer teaspace-admin.css tokens. */
 body {
-    background-color: #3c3d3d;
+    background-color: #121214;
 }
 .wrapper {
-    background-color: #3c3d3d;
+    background-color: #121214;
 }
 .content-wrapper {
-    background-color: #3c3d3d;
+    background-color: #121214;
 }
 .main-header {
-    background-color: #3c3d3d;
-    color: #FFF;
+    background-color: #121214;
+    color: #f2f2f4;
 }
 .card  {
-    background-color: #000357;
-    color: #FFF;
+    background-color: #1a1b1f;
+    color: #f2f2f4;
 }
 .info-box  {
-    background-color: #000357;
-    color: #FFF;
+    background-color: #1a1b1f;
+    color: #f2f2f4;
 }
-
-
 
 .card .table{
-    color: #FFF;
-    
+    color: #f2f2f4;
 }
 .table{
-    color: #FFF;
-    
+    color: #f2f2f4;
 }
 
 .card textarea{
-    color: #FFF;
-    background-color: #03088c;
+    color: #f2f2f4;
+    background-color: rgba(0, 0, 0, 0.28);
 }
 
-
 .text  {
-    color: #FFF;
-    
+    color: #f2f2f4;
 }
 
 a  {
-    color: #FFF;
-    
+    color: #14b8a6;
 }
 
 .card-body {
-    background-color: #000357;
-    
+    background-color: #1a1b1f;
 }
 .card .list-group-item {
-    background-color: #000357;
-    
+    background-color: #1a1b1f;
 }
 
 .main-footer {
-    background-color: #3c3d3d;
-    color: #FFF;
+    background-color: #121214;
+    color: #a1a1aa;
 }
-
 
 ul.home-timeline {
     list-style-type: none;
@@ -68,7 +59,7 @@ ul.home-timeline {
 }
 ul.home-timeline:before {
     content: ' ';
-    background: #0074ff;
+    background: #14b8a6;
     display: inline-block;
     position: absolute;
     left: 29px;
@@ -86,7 +77,7 @@ ul.home-timeline > li:before {
     display: inline-block;
     position: absolute;
     border-radius: 50%;
-    border: 3px solid #22c0e8;
+    border: 3px solid #14b8a6;
     left: 20px;
     width: 20px;
     height: 20px;
