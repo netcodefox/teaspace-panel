@@ -1,9 +1,13 @@
 <?php
 
-$enableSandbox = false;
+if (!isset($paypal_email)) {
+    include __DIR__ . '/../../../controller/config.php';
+}
+
+$enableSandbox = !empty($paypal_sandbox);
 
 $paypalConfig = [
-    'email' => 'paypal@email.de',
+    'email' => $paypal_email ?? '',
     'return_url' => $helper->url() . 'accounting/charge',
     'cancel_url' => $helper->url() . 'accounting/charge',
     'notify_url' => $helper->url() . 'paypal_ipn.php'

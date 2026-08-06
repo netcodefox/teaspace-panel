@@ -1,54 +1,83 @@
-# teaspace-panel
+# TeaSpace Panel
 
+Kundenpanel für TeaSpeak-/Hosting-Produkte mit Login, Zahlungen, Tickets und Team-Bereich.
 
-Hallo,
-ich habe lange überlegt, ob ich es freigeben soll
-aber ich habe mich dazu entschieden es freizugeben
+**Voraussetzung: PHP 8.0+** (getestet mit PHP 8.3)
 
-was hat es beinhaltet
-Login/Register
-Paypal/Molli
-Support Ticket System
-E-Mail Bestätigung
-E-Mail Blacklist für unerwünschte Emails
-Spenden System
-Benutzerverwaltung
+## Features
 
-Hello,
+- Login / Registrierung mit E-Mail-Bestätigung
+- PayPal- & Mollie-Zahlungen
+- Support-Ticket-System
+- E-Mail-Blacklist
+- Spenden- & Affiliate-System
+- Benutzerverwaltung (Team/Admin)
+- TeaSpeak-Server-Verwaltung
 
-I thought for a long time whether I should release it
+## Screenshots
 
-but i decided to release it
+- Screen 1: https://pic.nico-bary.de/img/futcwjwj.png
+- Screen 2: https://pic.nico-bary.de/img/lx54oojb.png
 
-what's inside
-Login / register
-Paypal / Molli
-Support ticket system
-E-mail confirmation
-Email blacklist for unsolicited emails
-donate system
-User administration
+## Voraussetzungen
 
+- PHP **8.0 oder neuer**
+- Extensions: `pdo`, `pdo_mysql`, `curl`, `mbstring`, `json`, `openssl`
+- MySQL / MariaDB
+- Apache mit `mod_rewrite` (oder vergleichbare Rewrite-Regeln)
+- Composer-Abhängigkeiten (`vendor/` – im Repo enthalten oder via `composer install`)
 
-screen #1
-https://pic.nico-bary.de/img/futcwjwj.png
-screen #2
-https://pic.nico-bary.de/img/lx54oojb.png
+## Installation (empfohlen)
 
+1. Dateien auf den Webserver legen (Document Root oder Unterordner).
+2. Im Browser `https://deine-domain.tld/pfad/install/` öffnen.
+3. Die 4 Schritte durchlaufen:
+   - Systemprüfung
+   - Datenbankverbindung (DB wird bei Bedarf angelegt, Schema aus `teaspace.sql` importiert)
+   - Site-/SMTP-/Zahlungs-Einstellungen
+   - Admin-Konto anlegen
+4. Nach Erfolg erscheint `install/install.lock` – der Installer ist gesperrt.
+5. Aus Sicherheitsgründen den Ordner `install/` löschen oder den Webzugriff darauf sperren.
+6. Login unter `/login` mit dem angelegten Admin-Konto.
 
-installation
-Datenbank verbindung
-unter 
-app/controler/config.php
-email einstellung
-unter
-app/notifications/sendMail.php
-Mollie einstellung
-unter
-app/manager/customer/payment/mollie/initialize.php
-paypal
-unter
-app/manager/customer/payment/functions.php
-telegram
-unter 
-resources/team/user.php line 98
+Beim ersten Aufruf von `index.php` ohne Lock wird automatisch zum Installer weitergeleitet.
+
+## Manuelle Installation
+
+1. `composer install` (falls `vendor/` fehlt)
+2. `app/controller/config.sample.php` nach `app/controller/config.php` kopieren und ausfüllen
+3. Datenbank anlegen und `teaspace.sql` importieren
+4. Admin-Benutzer manuell in der Tabelle `users` anlegen (`role = admin`, `state = active`, Passwort als `password_hash`)
+5. In `.htaccess` die `RewriteBase` an den Installationspfad anpassen (z. B. `/` oder `/teaspace/`)
+6. Datei `install/install.lock` anlegen (beliebiger Inhalt), damit das Panel startet
+
+### Wichtige Config-Werte
+
+| Einstellung | Datei / Variable |
+|---|---|
+| Datenbank & URL | `app/controller/config.php` |
+| SMTP | `$mail_*` in `config.php` |
+| Mollie | `$mollie_api_key` |
+| PayPal | `$paypal_email`, `$paypal_sandbox` |
+| reCAPTCHA | `$grecaptchaSiteKey`, `$grecaptchaSecret` |
+| Telegram | `$telegram_token`, `$telegram_chat_id` |
+| Cron-Secret | `$cron_key` → Aufruf `crone_job.php?key=DEIN_SECRET` |
+
+## Nach dem Setup
+
+- TeaSpeak-Nodes unter Team → Nodes hinterlegen
+- Zahlungsmethoden (Mollie/PayPal) in der Config prüfen
+- Cron-Job einrichten, z. B. täglich:  
+  `https://deine-domain.tld/crone_job.php?key=DEIN_SECRET`
+
+## PHP 8 – Hinweise zu diesem Release
+
+- Statische Aufrufe nicht-statischer Methoden entfernt
+- `DateTime(null, …)` durch `DateTime('now', …)` ersetzt
+- Optionale Parameter vor Pflichtparametern in den TS-Admin-Klassen korrigiert
+- Undefined-Index-Zugriffe und fehlende Resource-Dateien abgefangen
+- Klartext-Secrets aus dem Repo entfernt; Konfiguration über Installer/`config.php`
+
+## Lizenz
+
+Siehe `LICENSE`.

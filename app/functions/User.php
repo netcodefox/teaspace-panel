@@ -40,7 +40,8 @@ class User extends Controller
 
     public function generateSessionToken($data)
     {
-        $session_token = helper::generateRandomString(30);
+        global $helper;
+        $session_token = $helper->generateRandomString(30);
 
         $SQL = self::db()->prepare("UPDATE `users` SET `session_token` = :session_token WHERE `email` = :email OR `username` = :username");
         $SQL->execute(array(":session_token" => $session_token, ":email" => $data, ":username" => $data));
@@ -108,7 +109,7 @@ class User extends Controller
 
     public function isInTeam($session_token)
     {
-        $role = User::getDataBySession($session_token,'role');
+        $role = $this->getDataBySession($session_token,'role');
 
         if($role == 'admin'){
             return true;
@@ -129,7 +130,7 @@ class User extends Controller
 
     public function isAdmin($session_token)
     {
-        $role = User::getDataBySession($session_token,'role');
+        $role = $this->getDataBySession($session_token,'role');
 
         if($role == 'admin'){
             return true;

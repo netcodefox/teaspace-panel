@@ -2153,7 +2153,7 @@ class teaadmin {
      * @param		string	$dirname	dirPath
      * @return     boolean success
      */
-    function ftCreateDir($cid, $cpw = null, $dirname) {
+    function ftCreateDir($cid, $cpw = null, $dirname = null) {
         if(!$this->runtime['selected']) { return $this->checkSelected(); }
         return $this->getData('boolean', 'ftcreatedir cid='.$cid.' cpw='.$this->escapeText($cpw).' dirname='.$this->escapeText($dirname));
     }
@@ -2178,7 +2178,7 @@ class teaadmin {
      * @param		array	$files	files
      * @return     boolean success
      */
-    function ftDeleteFile($cid, $cpw = '', $files) {
+    function ftDeleteFile($cid, $cpw = '', $files = array()) {
         if(!$this->runtime['selected']) { return $this->checkSelected(); }
         $fileArray = array();
 
@@ -2240,7 +2240,7 @@ class teaadmin {
      * @param		string 	$file	path to file
      * @return     boolean success
      */
-    function ftGetFileInfo($cid, $cpw = '', $file) {
+    function ftGetFileInfo($cid, $cpw = '', $file = null) {
         if(!$this->runtime['selected']) { return $this->checkSelected(); }
 
         return $this->getData('multi', 'ftgetfileinfo cid='.$cid.' cpw='.$this->escapeText($cpw).' name='.$this->escapeText($file));
@@ -2270,7 +2270,7 @@ class teaadmin {
      * @param		string	$path	filePath
      * @return     array	fileList
      */
-    function ftGetFileList($cid, $cpw = '', $path) {
+    function ftGetFileList($cid, $cpw = '', $path = null) {
         if(!$this->runtime['selected']) { return $this->checkSelected(); }
         return $this->getData('multi', 'ftgetfilelist cid='.$cid.' cpw='.$this->escapeText($cpw).' path='.$this->escapeText($path));
     }
@@ -2388,7 +2388,7 @@ class teaadmin {
      * @param		string  $tcpw		targetChannelPassword [optional]
      * @return     boolean success
      */
-    function ftRenameFile($cid, $cpw = null, $oldname, $newname, $tcid = null,  $tcpw = null) {
+    function ftRenameFile($cid, $cpw = null, $oldname = null, $newname = null, $tcid = null,  $tcpw = null) {
         if(!$this->runtime['selected']) { return $this->checkSelected(); }
         $newTarget = ($tcid != null ? ' tcid='.$tcid.' '.$tcpw : '');
         return $this->getData('boolean', 'ftrenamefile cid='.$cid.' cpw='.$cpw.' oldname='.$this->escapeText($oldname).' newname='.$this->escapeText($newname).$newTarget);

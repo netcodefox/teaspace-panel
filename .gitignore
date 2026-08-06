@@ -1,0 +1,4 @@
+/install/install.lock
+/.env
+Thumbs.db
+.DS_Store

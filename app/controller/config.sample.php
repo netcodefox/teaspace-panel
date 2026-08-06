@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Application configuration.
- * Generated/updated by the web installer – do not commit secrets.
+ * Sample configuration – copy to config.php or use the web installer.
+ * PHP 8.0+ required.
  */
 
 $db_host = 'localhost';
@@ -12,19 +12,19 @@ $db_password = '';
 
 $siteName = 'Tea-Space';
 
-$grecaptchaSiteKey = '';
-$grecaptchaSecret = '';
-
-$url = 'http://localhost/';
+$url = 'https://example.com/';
 $cdnUrl = $url . 'assets/style/';
 $picUrl = $url . 'assets/images/';
 
-$mail_host = '';
+$grecaptchaSiteKey = '';
+$grecaptchaSecret = '';
+
+$mail_host = 'smtp.example.com';
 $mail_port = 465;
 $mail_encryption = 'ssl';
-$mail_username = '';
+$mail_username = 'noreply@example.com';
 $mail_password = '';
-$mail_from = '';
+$mail_from = 'noreply@example.com';
 $mail_from_name = 'Kundendienst';
 
 $mollie_api_key = '';
@@ -35,4 +35,4 @@ $paypal_sandbox = false;
 $telegram_token = '';
 $telegram_chat_id = '';
 
-$cron_key = 'change-me';
+$cron_key = 'change-me-to-a-random-secret';

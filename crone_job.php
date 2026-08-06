@@ -4,16 +4,16 @@ include 'app/controller/config.php';
 include 'app/functions/autoload.php';
 include 'app/notifications/sendMail.php';
 
-if($_GET['key'] != '3j254hbh2354ljk4nj5345khj32b5'){
+if ($_GET['key'] != $cron_key) {
     die('no auth');
 }
 
 //Time now
-$date = new DateTime(null, new DateTimeZone('Europe/Berlin'));
+$date = new DateTime('now', new DateTimeZone('Europe/Berlin'));
 $dateTimeNow = $date->format('Y-m-d H:i:s');
 
 //Time minus 3 days
-$dateMinus = new DateTime(null, new DateTimeZone('Europe/Berlin'));
+$dateMinus = new DateTime('now', new DateTimeZone('Europe/Berlin'));
 $dateMinus->modify('-3 day');
 $dateTimeMinus3Days = $dateMinus->format('Y-m-d H:i:s');
 

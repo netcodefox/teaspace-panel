@@ -2,12 +2,12 @@
 
 $helper = new Helper();
 
-class helper extends Controller
+class Helper extends Controller
 {
 
     public function protect($string)
     {
-        $protection = htmlspecialchars(trim($string), ENT_QUOTES);
+        $protection = htmlspecialchars(trim((string) $string), ENT_QUOTES);
         return $protection;
     }
 

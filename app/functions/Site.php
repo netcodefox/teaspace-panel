@@ -8,7 +8,7 @@ class Site extends Controller
     public function validateCaptcha($captacha) {
         $fields_string = '';
         $fields = array(
-            'secret' => Helper::grecaptchaSecret(),
+            'secret' => $this->grecaptchaSecret(),
             'response' => $captacha
         );
         foreach($fields as $key=>$value)
@@ -35,9 +35,9 @@ class Site extends Controller
 
     public function getRecaptcha()
     {
-        $captach = '<script src="https://www.google.com/recaptcha/api.js?render='.Helper::grecaptchaSiteKey().'"></script>
+        $captach = '<script src="https://www.google.com/recaptcha/api.js?render='.$this->grecaptchaSiteKey().'"></script>
 <script>
-    var grecaptchaSiteKey = "'.Helper::grecaptchaSiteKey().'";
+    var grecaptchaSiteKey = "'.$this->grecaptchaSiteKey().'";
 
     var _RECAPTCHA = _RECAPTCHA || {};
 
@@ -121,7 +121,7 @@ class Site extends Controller
 
     public function getDiffInDays($dateTime)
     {
-        $datetime1 = new DateTime(null, new DateTimeZone('Europe/Berlin'));
+        $datetime1 = new DateTime('now', new DateTimeZone('Europe/Berlin'));
         $datetime2 = new DateTime($dateTime, new DateTimeZone('Europe/Berlin'));
         $interval = $datetime1->diff($datetime2);
         return $interval->format('%a');

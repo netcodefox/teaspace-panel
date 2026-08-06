@@ -1,9 +1,24 @@
 {
+    "name": "nico-bary/teaspace-panel",
+    "description": "TeaSpeak hosting customer panel",
+    "type": "project",
     "require": {
-        "guzzlehttp/guzzle": "^6.3",
+        "php": ">=8.0",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "guzzlehttp/guzzle": "^6.5 || ^7.0",
         "plesk/api-php-lib": "^1.0",
-        "phpmailer/phpmailer": "^6.1",
+        "phpmailer/phpmailer": "^6.5",
         "mollie/mollie-api-php": "^2.0",
         "planetteamspeak/ts3-php-framework": "^1.1"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }

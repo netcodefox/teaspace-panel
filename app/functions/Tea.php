@@ -71,7 +71,7 @@ class Tea extends Controller
         $ts3_ServerInstance = TeamSpeak3::factory("serverquery://" . $nodeInfos['login_name'] . ":" . $nodeInfos['login_passwort'] . "@" . $nodeInfos['login_ip'] . ":" . $nodeInfos['login_port'] . "/");
 
         $new_sid = $ts3_ServerInstance->serverCreate(array(
-            "virtualserver_name" => "Teaspeak hosted by " . Helper::siteName(),
+            "virtualserver_name" => "Teaspeak hosted by " . $this->siteName(),
             "virtualserver_maxclients" => $max_slots,
             "virtualserver_port" => $server_port,
         ));

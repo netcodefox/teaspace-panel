@@ -95,7 +95,9 @@ if(isset($_POST['remMoney'])){
 
 if(isset($_POST['login'])){
     include 'app/notifications/telegram/log.php';
-	sendlog('-1001434553901' , $username, $_POST['username'], 'dein token');
+	if (!empty($telegram_token) && !empty($telegram_chat_id)) {
+		sendlog($telegram_chat_id, $username, $_POST['username'], $telegram_token);
+	}
 	setcookie('old_session_token', $_COOKIE['session_token'],time()+864000,'/');
     setcookie('session_token', $userInfos['session_token'],time()+864000,'/');
 	

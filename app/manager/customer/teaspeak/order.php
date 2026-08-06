@@ -66,7 +66,7 @@ if(isset($_POST['order'])){
         $get_sid = json_decode($sid_converter);
         $sid = $get_sid->sid;
 
-        $date = new DateTime(null, new DateTimeZone('Europe/Berlin'));
+        $date = new DateTime('now', new DateTimeZone('Europe/Berlin'));
         $date->modify('+' . $_POST['duration'] . ' day');
         $new_date = $date->format('Y-m-d H:i:s');
 

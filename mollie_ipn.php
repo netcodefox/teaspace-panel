@@ -1,8 +1,8 @@
 <?php
 
 include './vendor/autoload.php';
-include 'app/functions/autoload.php';
 include 'app/controller/config.php';
+include 'app/functions/autoload.php';
 
 
 ob_start();

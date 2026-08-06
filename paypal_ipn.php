@@ -1,7 +1,7 @@
 <?php
 include './vendor/autoload.php';
-include 'app/functions/autoload.php';
 include 'app/controller/config.php';
+include 'app/functions/autoload.php';
 
 require 'app/manager/customer/payment/functions.php';
 
